@@ -98,3 +98,35 @@ body {
         transform: translateY(0px);
     }
 }
+
+.text-info {
+    text-align: center;
+    margin-top: 50px;
+    color: #D4AF37; /* Match the gold theme */
+}
+
+.title-years {
+    font-family: 'Great Vibes', cursive;
+    font-size: 3rem;
+    margin-bottom: -10px;
+}
+
+.number-15 {
+    font-size: 5rem;
+    font-family: serif;
+    font-weight: bold;
+}
+
+.celebrant-name {
+    font-family: 'Great Vibes', cursive;
+    font-size: 5.5rem;
+    margin-top: -20px;
+}
+
+.celebrant-last-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-top: -15px;
+}
