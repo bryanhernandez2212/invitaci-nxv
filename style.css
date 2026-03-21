@@ -1,0 +1,100 @@
+:root {
+    --bg-white: #FFFFFF;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: sans-serif;
+}
+
+.invitation-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.composite-container {
+    position: relative;
+    width: 800px; /* Wider to accommodate wheels */
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 200px; /* Lower the composition */
+}
+
+#horse-img {
+    position: absolute;
+    width: 500px;
+    bottom: 0;
+    z-index: 1;
+    animation: float 4s ease-in-out infinite;
+}
+
+#persona-img {
+    position: absolute;
+    width: 450px;
+    bottom: 30px; /* Adjust vertical overlap */
+    z-index: 2;
+    animation: float 5s ease-in-out infinite alternate;
+}
+
+#flowers-img {
+    position: absolute;
+    width: 600px;
+    bottom: -50px; /* Position at the very bottom, slightly outside to frame */
+    z-index: 4; /* In front of everything */
+    animation: float 6s ease-in-out infinite;
+}
+
+#rueda-left {
+    position: absolute;
+    width: 350px;
+    left: -50px;
+    bottom: 20px;
+    z-index: 1;
+    opacity: 0.9;
+    animation: rotateWheel 15s linear infinite;
+}
+
+#rueda-right {
+    position: absolute;
+    width: 350px;
+    right: -50px;
+    bottom: 20px;
+    z-index: 1;
+    opacity: 0.9;
+    animation: rotateWheel 15s linear infinite reverse; /* Rotates opposite way for symmetry */
+}
+
+@keyframes rotateWheel {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
