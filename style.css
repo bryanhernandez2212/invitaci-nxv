@@ -108,7 +108,7 @@ body {
 .title-years {
     font-family: 'Great Vibes', cursive;
     font-size: 3rem;
-    margin-bottom: -10px;
+    margin-bottom: 10px; /* Increased from -10px */
 }
 
 .number-15 {
@@ -120,15 +120,72 @@ body {
 .celebrant-name {
     font-family: 'Great Vibes', cursive;
     font-size: 5.5rem;
-    margin-top: -20px;
+    margin-top: 10px; /* Increased from -20px */
+    letter-spacing: 2px; /* Added letter-spacing */
+    word-spacing: 15px; /* Added word-spacing */
 }
 
 .celebrant-last-name {
     font-family: 'Cinzel', serif;
     font-size: 1.3rem;
-    letter-spacing: 5px;
+    letter-spacing: 8px; /* Increased from 5px */
+    word-spacing: 10px; /* Added word-spacing */
     text-transform: uppercase;
-    margin-top: -15px;
+    margin-top: 10px; /* Increased from -15px */
+}
+
+#countdown-container {
+    text-align: center;
+    margin-top: 60px;
+    font-family: 'Cinzel', serif;
+}
+
+.countdown-title {
+    font-size: 1.2rem;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    font-weight: normal;
+}
+
+#countdown {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.countdown-item span {
+    background-color: #F8F8F8;
+    color: #333;
+    font-size: 2.2rem;
+    font-weight: normal;
+    padding: 15px 12px;
+    border-radius: 4px;
+    min-width: 65px;
+    display: block;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 8px;
+}
+
+.countdown-item p {
+    font-size: 0.7rem;
+    color: #666;
+    text-transform: lowercase;
+    letter-spacing: 1px;
+}
+
+.separator {
+    font-size: 1.5rem;
+    color: #999;
+    padding-bottom: 25px; /* Adjust vertical alignment with span */
 }
 
 @media (max-width: 600px) {
@@ -188,6 +245,30 @@ body {
 
     .celebrant-last-name {
         font-size: 0.9rem;
-        letter-spacing: 2px;
+        letter-spacing: 4px; /* Increased from 2px */
+        word-spacing: 5px; /* Added word-spacing */
+    }
+
+    #countdown-container {
+        margin-top: 40px;
+    }
+
+    #countdown {
+        gap: 5px;
+    }
+
+    .countdown-item span {
+        font-size: 1.4rem;
+        padding: 10px 8px;
+        min-width: 45px;
+    }
+
+    .countdown-item p {
+        font-size: 0.55rem;
+    }
+
+    .separator {
+        font-size: 1rem;
+        padding-bottom: 20px;
     }
 }

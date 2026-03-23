@@ -1,5 +1,5 @@
 // Configuration: Set the date of the event
-const eventDate = new Date('October 15, 2026 16:00:00').getTime();
+const eventDate = new Date('September 19, 2026 16:00:00').getTime();
 
 function updateCountdown() {
     const now = new Date().getTime();
