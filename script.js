@@ -1,6 +1,10 @@
 // Configuration: Set the date of the event
 const eventDate = new Date('September 19, 2026 16:00:00').getTime();
 
+// Inicializar paneles de eventos
+const _pRecepcion = document.getElementById('panel-recepcion');
+if (_pRecepcion) { _pRecepcion.style.opacity = '0'; _pRecepcion.style.transform = 'translateY(40px)'; }
+
 function updateCountdown() {
     const now = new Date().getTime();
     const distance = eventDate - now;
@@ -125,7 +129,7 @@ document.addEventListener('scroll', () => {
     if (persona) {
         const progress = Math.min(scrollY / 600, 1);
         const scale = 1 + (progress * 0.1);
-        persona.style.transform = `scale(${scale})`; // Just scale, no translateY
+        persona.style.transform = `scale(${scale})`;
     }
 
     // Fade IN the new text above and below the girl
@@ -135,6 +139,24 @@ document.addEventListener('scroll', () => {
         el.style.opacity = fadeInProgress;
         el.style.transform = `translateY(${30 - (fadeInProgress * 30)}px)`;
     });
+
+
+    // --- Transición Ceremonia → Recepción ---
+    const eventsSection = document.getElementById('events-scroll');
+    const panelCeremonia = document.getElementById('panel-ceremonia');
+    const panelRecepcion = document.getElementById('panel-recepcion');
+
+    if (eventsSection && panelCeremonia && panelRecepcion) {
+        const top = eventsSection.offsetTop;
+        const height = eventsSection.offsetHeight;
+        const progress = Math.min(Math.max((scrollY - top) / (height * 0.5), 0), 1);
+
+        panelCeremonia.style.opacity = 1 - progress;
+        panelCeremonia.style.transform = `translateY(${-progress * 40}px)`;
+
+        panelRecepcion.style.opacity = progress;
+        panelRecepcion.style.transform = `translateY(${(1 - progress) * 40}px)`;
+    }
 });
 
 // --- Music Toggle Logic ---

@@ -63,6 +63,11 @@
             </div>
         </div>
 
+        <!-- Sombrero decorativo -->
+        <div class="sombrero-deco">
+            <img src="assets/img/sombrero-2.png" alt="Sombrero decorativo">
+        </div>
+
         <!-- Carrusel de Imágenes -->
         <section class="carousel-container">
             <div class="carousel-slide fade">
@@ -126,13 +131,47 @@
             </div>
         </section>
 
-        <!-- Sección de Ceremonia -->
-        <section class="ceremony-details reveal">
-            <h2 class="ceremony-title">Ceremonia Religiosa</h2>
-            <p class="ceremony-time">4:00 PM</p>
-            <p class="ceremony-place">Parroquia de San Miguel Arcángel</p>
-            <p class="ceremony-address">Av. Principal #123, Centro</p>
-            <a href="#" class="btn-location" target="_blank">Ver Ubicación</a>
+        <!-- Scroll de Ceremonia → Recepción -->
+        <div class="events-scroll-section" id="events-scroll">
+            <div class="events-sticky" id="events-sticky">
+
+                <!-- Panel: Ceremonia Religiosa -->
+                <div class="event-panel" id="panel-ceremonia">
+                    <img src="assets/img/iglesia.png" alt="Iglesia" class="iglesia-img">
+                    <h2 class="ceremony-title">Ceremonia Religiosa</h2>
+                    <p class="ceremony-time">4:00 PM</p>
+                    <p class="ceremony-place">Parroquia de San Miguel Arcángel</p>
+                    <p class="ceremony-address">Av. Principal #123, Centro</p>
+                    <a href="#" class="btn-location" target="_blank">Ver Ubicación</a>
+                </div>
+
+                <!-- Panel: Recepción -->
+                <div class="event-panel" id="panel-recepcion">
+                    <img src="assets/img/ceremonia.png" alt="Recepción" class="iglesia-img">
+                    <h2 class="ceremony-title">Recepción</h2>
+                    <p class="ceremony-time">A continuación</p>
+                    <p class="ceremony-place">Los esperamos después a la recepción</p>
+                    <p class="ceremony-address">en el Salón 123 ubicado detrás de la iglesia</p>
+                    <a href="#" class="btn-location" target="_blank">Ver Ubicación</a>
+                </div>
+
+            </div>
+        </div>
+        <!-- Sección de Confirmación -->
+        <section class="confirmation-section reveal">
+            <div class="confirmation-inner">
+                <p class="confirmation-decorative">✦ ✦ ✦</p>
+                <h2 class="confirmation-title">Confirmación de Asistencia</h2>
+                <p class="confirmation-text">
+                    Tu presencia es el mejor regalo.<br>
+                    Por favor confirma tu asistencia antes del <strong>10 de septiembre de 2026</strong>.
+                </p>
+                <a href="https://wa.me/521XXXXXXXXXX?text=¡Hola!%20Confirmo%20mi%20asistencia%20a%20los%20XV%20de%20Yareni%20Guadalupe%20🌸"
+                   class="btn-confirm" target="_blank">
+                    Confirmar por WhatsApp
+                </a>
+                <p class="confirmation-footer">— Con amor, Yareni Guadalupe —</p>
+            </div>
         </section>
     </main>
     <script src="script.js"></script>

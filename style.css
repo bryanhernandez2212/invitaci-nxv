@@ -163,6 +163,7 @@ body {
     animation: float 5s ease-in-out infinite alternate;
 }
 
+
 #flowers-img {
     position: absolute;
     width: 600px;
@@ -245,6 +246,27 @@ body {
     word-spacing: 10px; /* Added word-spacing */
     text-transform: uppercase;
     margin-top: 10px; /* Increased from -15px */
+}
+
+/* --- Sombrero Decorativo --- */
+.sombrero-deco {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto 0 auto;
+}
+
+.sombrero-deco img {
+    width: 280px;
+    height: auto;
+    animation: sombreroSwing 3s ease-in-out infinite;
+    transform-origin: center top;
+}
+
+@keyframes sombreroSwing {
+    0%   { transform: rotate(-6deg); }
+    50%  { transform: rotate(6deg); }
+    100% { transform: rotate(-6deg); }
 }
 
 /* --- Carousel Styles --- */
@@ -369,6 +391,57 @@ body {
     color: rgba(212, 175, 55, 0.3);
     padding-bottom: 35px; 
     font-weight: lighter;
+}
+
+/* --- Scroll Eventos (Ceremonia → Recepción) --- */
+.events-scroll-section {
+    width: 100%;
+    height: 200vh; /* espacio para hacer scroll */
+    position: relative;
+}
+
+.events-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.event-panel {
+    position: absolute;
+    width: 90%;
+    max-width: 700px;
+    text-align: center;
+    padding: 60px 20px;
+    border-top: 1px solid #D4AF37;
+    border-bottom: 1px solid #D4AF37;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* Decoración diamante en las líneas */
+.event-panel::before, .event-panel::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: var(--bg-white);
+    border: 1px solid #D4AF37;
+    transform: translateX(-50%) rotate(45deg);
+    left: 50%;
+}
+
+.event-panel::before { top: -5px; }
+.event-panel::after  { bottom: -5px; }
+
+/* Imagen Iglesia --- */
+.iglesia-img {
+    display: block;
+    margin: 0 auto 8px auto;
+    width: 220px;
+    height: auto;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
 }
 
 /* --- Ceremony Details --- */
@@ -557,6 +630,92 @@ body.locked {
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
 }
 
+/* --- Confirmación de Asistencia --- */
+.confirmation-section {
+    width: 90%;
+    max-width: 650px;
+    margin: 80px auto 60px auto;
+    text-align: center;
+}
+
+.confirmation-inner {
+    padding: 60px 30px;
+    border-top: 1px solid #D4AF37;
+    border-bottom: 1px solid #D4AF37;
+    position: relative;
+}
+
+.confirmation-inner::before, .confirmation-inner::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: var(--bg-white);
+    border: 1px solid #D4AF37;
+    transform: translateX(-50%) rotate(45deg);
+    left: 50%;
+}
+.confirmation-inner::before { top: -5px; }
+.confirmation-inner::after  { bottom: -5px; }
+
+.confirmation-decorative {
+    color: #D4AF37;
+    font-size: 1rem;
+    letter-spacing: 10px;
+    margin-bottom: 20px;
+}
+
+.confirmation-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    color: #b58900;
+    letter-spacing: 3px;
+    margin-bottom: 25px;
+    font-weight: normal;
+}
+
+.confirmation-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: 35px;
+}
+
+.confirmation-text strong {
+    color: #333;
+    font-weight: bold;
+}
+
+.btn-confirm {
+    display: inline-block;
+    padding: 15px 40px;
+    background-color: #25D366;
+    color: #fff;
+    text-decoration: none;
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: 2px;
+    transition: all 0.4s ease;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+
+.btn-confirm:hover {
+    background-color: #1ebe5d;
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+    transform: translateY(-2px);
+}
+
+.confirmation-footer {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.8rem;
+    color: #D4AF37;
+    margin-top: 35px;
+}
+
 @media (max-width: 600px) {
     body {
         align-items: flex-start; /* Start from top on mobile */
@@ -577,6 +736,7 @@ body.locked {
         width: 230px;
         bottom: 10px;
     }
+
 
     #flowers-img {
         width: 300px;
