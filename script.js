@@ -104,3 +104,35 @@ function resetInterval() {
 // Initial display and auto-play
 showSlides(slideIndex);
 slideInterval = setInterval(nextSlide, 3000);
+
+// --- Story Scroll Animation ---
+document.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    
+    // The background elements fade out between 0 and 400px of scroll
+    const fadeOutProgress = Math.min(scrollY / 400, 1);
+    const elementsToFadeOut = document.querySelectorAll('#rueda-left, #rueda-right, #horse-img, #flowers-img, .text-info');
+    
+    elementsToFadeOut.forEach(el => {
+        el.style.opacity = 1 - fadeOutProgress;
+        el.style.transform = `translateY(-${fadeOutProgress * 50}px)`;
+        // Restore float animation if at top, but realistically the float is lost once transformed
+        // It's a trade-off for the scroll effect.
+    });
+    
+    // Subtle scale effect on the Quinceañera
+    const persona = document.getElementById('persona-img');
+    if (persona) {
+        const progress = Math.min(scrollY / 600, 1);
+        const scale = 1 + (progress * 0.1);
+        persona.style.transform = `scale(${scale})`; // Just scale, no translateY
+    }
+
+    // Fade IN the new text above and below the girl
+    const fadeInProgress = Math.max(0, Math.min((scrollY - 200) / 400, 1));
+    const storyTexts = document.querySelectorAll('.story-text');
+    storyTexts.forEach(el => {
+        el.style.opacity = fadeInProgress;
+        el.style.transform = `translateY(${30 - (fadeInProgress * 30)}px)`;
+    });
+});

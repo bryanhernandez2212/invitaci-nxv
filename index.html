@@ -12,22 +12,41 @@
         href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet">
 </head>
-
 <body>
-    <main class="invitation-container simple-view">
-        <div class="composite-container">
-            <img src="assets/img/rueda.png" alt="Rueda Izquierda" id="rueda-left">
-            <img src="assets/img/persona.png" alt="Quinceañera" id="persona-img">
-            <img src="assets/img/caballo.png" alt="Caballo" id="horse-img">
-            <img src="assets/img/flores-principal.png" alt="Flores" id="flowers-img">
-            <img src="assets/img/rueda.png" alt="Rueda Derecha" id="rueda-right">
-        </div>
 
-        <section class="text-info">
-            <p class="title-years">Mis <span class="number-15">15</span> Años</p>
-            <h1 class="celebrant-name">Yareni Guadalupe</h1>
-            <p class="celebrant-last-name">Hernández Luna</p>
-        </section>
+
+    <main class="invitation-container simple-view">
+        
+        <!-- Story Scroll Section -->
+        <div class="scroll-story">
+            <div class="sticky-story">
+                
+                <!-- Decoración que se desplaza -->
+                <img src="assets/img/flores-vertical.png" alt="Flores Esquina Izquierda" class="corner-flower top-left">
+                <img src="assets/img/flores-vertical.png" alt="Flores Esquina Derecha" class="corner-flower top-right">
+
+                <div class="composite-container">
+                    <img src="assets/img/rueda.png" alt="Rueda Izquierda" id="rueda-left">
+                    <img src="assets/img/persona.png" alt="Quinceañera" id="persona-img">
+                    <img src="assets/img/caballo.png" alt="Caballo" id="horse-img">
+                    <img src="assets/img/flores-principal.png" alt="Flores" id="flowers-img">
+                    <img src="assets/img/rueda.png" alt="Rueda Derecha" id="rueda-right">
+                </div>
+
+                <section class="text-info">
+                    <p class="title-years">Mis <span class="number-15">15</span> Años</p>
+                    <h1 class="celebrant-name">Yareni Guadalupe</h1>
+                    <p class="celebrant-last-name">Hernández Luna</p>
+                </section>
+
+                <!-- Text that appears later -->
+                <div class="story-bottom-container">
+                    <p class="story-text">Dejo atrás el mundo y entro a uno nuevo, aunque a veces dudo o temo, estoy llena de esperanzas y sueños.</p>
+                    <p class="story-text">Tengo la sensación de que estoy construyendo mi propio camino.</p>
+                    <p class="story-text">Siento alegría y quiero compartirlo rodeada de todos los que quiero.</p>
+                </div>
+            </div>
+        </div>
 
         <!-- Carrusel de Imágenes -->
         <section class="carousel-container">
@@ -78,6 +97,17 @@
                     <span id="seconds">00</span>
                     <p>segundos</p>
                 </div>
+            </div>
+        </section>        <!-- Padres y Padrinos -->
+        <section class="parents-godparents reveal">
+            <div class="parents-block">
+                <h3 class="role-title">Padres</h3>
+                <p class="names-text">Ismael Hernández Trujillo<br>&<br>Guadalupe del Carmen Luna Hernández</p>
+            </div>
+            
+            <div class="godparents-block">
+                <h3 class="role-title">Padrinos</h3>
+                <p class="names-text">Por definir y Confirmar</p>
             </div>
         </section>
 

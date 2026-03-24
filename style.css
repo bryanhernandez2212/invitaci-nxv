@@ -17,11 +17,73 @@ body {
     font-family: sans-serif;
 }
 
+/* --- Decoración Fija --- */
+.corner-flower {
+    position: absolute;
+    top: -25px; /* Subidas un poquito hacia el techo */
+    width: 200px;
+    z-index: 1000;
+    pointer-events: none;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
+}
+
+.top-left {
+    left: -50px;
+    transform: scaleX(-1); /* Girada al revés */
+}
+
+.top-right {
+    right: -50px;
+    transform: none; /* Regresada a su estado original */
+}
+
 .invitation-container {
-    padding: 20px;
+    padding: 0; /* Changed to 0 since inner elements will handle padding, allowing full width */
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+}
+
+/* --- Scroll Story --- */
+.scroll-story {
+    width: 100%;
+    height: 250vh; /* Gives room to scroll */
+    position: relative;
+}
+
+.sticky-story {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.story-bottom-container {
+    position: absolute;
+    bottom: 15%; /* Incremented from 5% to move closer to the image */
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+.story-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; /* Reduced from 1.5rem */
+    color: #444;
+    font-style: italic;
+    opacity: 0;
+    text-align: center;
+    transition: opacity 0.5s ease;
+    margin: 10px 0;
+    line-height: 1.5;
 }
 
 .composite-container {
@@ -32,6 +94,57 @@ body {
     justify-content: center;
     align-items: center;
     margin-top: 200px; /* Lower the composition */
+}
+
+/* --- Personal Message --- */
+.personal-message {
+    width: 90%;
+    max-width: 700px;
+    margin: 80px auto;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: #444;
+    line-height: 1.6;
+    font-style: italic;
+    padding: 20px;
+}
+
+.personal-message p {
+    margin-bottom: 15px;
+}
+
+.personal-message p:last-child {
+    margin-bottom: 0;
+}
+
+/* --- Padres y Padrinos --- */
+.parents-godparents {
+    text-align: center;
+    margin: 80px auto;
+    padding: 0 20px;
+    width: 90%;
+    max-width: 600px;
+}
+
+.parents-block {
+    margin-bottom: 40px;
+}
+
+.role-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: #b58900;
+    font-style: italic;
+    margin-bottom: 15px;
+    letter-spacing: 2px;
+}
+
+.names-text {
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+    color: #333;
+    line-height: 1.5;
 }
 
 #horse-img {
@@ -201,16 +314,16 @@ body {
 
 #countdown-container {
     text-align: center;
-    margin-top: 60px;
+    margin-top: 80px;
     font-family: 'Cinzel', serif;
 }
 
 .countdown-title {
-    font-size: 1.2rem;
-    color: #444;
+    font-size: 2rem;
+    color: #b58900;
     text-transform: uppercase;
-    letter-spacing: 3px;
-    margin-bottom: 20px;
+    letter-spacing: 5px;
+    margin-bottom: 40px;
     font-weight: normal;
 }
 
@@ -218,7 +331,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
 }
 
 .countdown-item {
@@ -228,56 +341,77 @@ body {
 }
 
 .countdown-item span {
-    background-color: #F8F8F8;
-    color: #333;
-    font-size: 2.2rem;
+    background-color: transparent;
+    color: #D4AF37;
+    font-size: 5.5rem;
     font-weight: normal;
-    padding: 15px 12px;
-    border-radius: 4px;
-    min-width: 65px;
+    padding: 10px 10px;
+    min-width: 100px;
     display: block;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    margin-bottom: 8px;
+    box-shadow: none;
+    border: none;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.4);
+    margin-bottom: 15px;
 }
 
 .countdown-item p {
-    font-size: 0.7rem;
-    color: #666;
-    text-transform: lowercase;
-    letter-spacing: 1px;
+    font-size: 1.1rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: normal;
 }
 
 .separator {
-    font-size: 1.5rem;
-    color: #999;
-    padding-bottom: 25px; /* Adjust vertical alignment with span */
+    font-size: 4rem;
+    color: rgba(212, 175, 55, 0.3);
+    padding-bottom: 35px; 
+    font-weight: lighter;
 }
 
 /* --- Ceremony Details --- */
 .ceremony-details {
-    background-color: #FCE4EC; /* Soft pink */
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    margin-top: 60px;
+    background-color: transparent;
+    width: 90%;
+    max-width: 700px;
+    margin: 80px auto;
     padding: 60px 20px;
-    border-radius: 0;
     text-align: center;
     color: #444;
+    border-top: 1px solid #D4AF37;
+    border-bottom: 1px solid #D4AF37;
+    position: relative;
 }
+
+/* Detalles de diamante dorado en las líneas */
+.ceremony-details::before, .ceremony-details::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: var(--bg-white);
+    border: 1px solid #D4AF37;
+    transform: translateX(-50%) rotate(45deg);
+    left: 50%;
+}
+
+.ceremony-details::before { top: -5px; }
+.ceremony-details::after { bottom: -5px; }
 
 .ceremony-title {
     font-family: 'Cinzel', serif;
     font-size: 2.2rem;
     color: #b58900;
     margin-bottom: 20px;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
 }
 
 .ceremony-time {
     font-family: 'Playfair Display', serif;
     font-size: 1.6rem;
-    color: #333;
+    color: #555;
     font-style: italic;
     margin-bottom: 15px;
 }
@@ -285,39 +419,38 @@ body {
 .ceremony-place {
     font-family: 'Cinzel', serif;
     font-size: 1.4rem;
-    color: #222;
+    color: #333;
     margin-bottom: 8px;
-    font-weight: bold;
-    letter-spacing: 1px;
+    font-weight: normal;
+    letter-spacing: 2px;
 }
 
 .ceremony-address {
-    font-family: sans-serif;
-    font-size: 1rem;
-    color: #555;
-    margin-bottom: 30px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #777;
+    margin-bottom: 40px;
 }
 
 .btn-location {
     display: inline-block;
-    padding: 12px 35px;
-    background-color: #D4AF37;
-    color: #fff;
+    padding: 14px 40px;
+    background-color: transparent;
+    color: #D4AF37;
     text-decoration: none;
     font-family: 'Cinzel', serif;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: bold;
-    letter-spacing: 2px;
-    border-radius: 30px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    letter-spacing: 3px;
+    border: 1px solid #D4AF37;
+    transition: all 0.4s ease;
     text-transform: uppercase;
 }
 
 .btn-location:hover {
-    background-color: #b58900;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    background-color: #D4AF37;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 
 @media (max-width: 600px) {
@@ -386,21 +519,22 @@ body {
     }
 
     #countdown {
-        gap: 5px;
+        gap: 8px;
     }
 
     .countdown-item span {
-        font-size: 1.4rem;
-        padding: 10px 8px;
-        min-width: 45px;
+        font-size: 2.8rem;
+        padding: 10px 5px;
+        min-width: 60px;
     }
 
     .countdown-item p {
-        font-size: 0.55rem;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
     }
 
     .separator {
-        font-size: 1rem;
-        padding-bottom: 20px;
+        font-size: 2.5rem;
+        padding-bottom: 30px;
     }
 }
