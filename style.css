@@ -453,6 +453,110 @@ body {
     box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 
+/* --- Splash Screen --- */
+body.locked {
+    overflow: hidden;
+}
+
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    transition: opacity 1s ease, visibility 1s ease;
+}
+
+.splash-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.splash-content {
+    text-align: center;
+    padding: 30px;
+}
+
+.splash-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 5rem;
+    color: #D4AF37;
+    margin-bottom: 20px;
+}
+
+.splash-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+    color: #333;
+    letter-spacing: 5px;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+}
+
+.btn-open {
+    padding: 15px 40px;
+    background-color: transparent;
+    color: #D4AF37;
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    border: 2px solid #D4AF37;
+    cursor: pointer;
+    letter-spacing: 3px;
+    transition: all 0.4s ease;
+    text-transform: uppercase;
+}
+
+.btn-open:hover {
+    background-color: #D4AF37;
+    color: white;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
+
+/* --- Botón de Música --- */
+.music-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: transparent;
+    color: #D4AF37;
+    border: 2px solid #D4AF37;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    background-color: var(--bg-white);
+}
+
+.music-btn:hover {
+    transform: scale(1.1);
+    background-color: #D4AF37;
+    color: white;
+}
+
+.music-btn.playing {
+    animation: pulseMusic 2s infinite;
+    background-color: #D4AF37;
+    color: white;
+}
+
+@keyframes pulseMusic {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+    70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
 @media (max-width: 600px) {
     body {
         align-items: flex-start; /* Start from top on mobile */
@@ -536,5 +640,13 @@ body {
     .separator {
         font-size: 2.5rem;
         padding-bottom: 30px;
+    }
+
+    .music-btn {
+        bottom: 15px;
+        right: 15px;
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
     }
 }

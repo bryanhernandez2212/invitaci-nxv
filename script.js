@@ -136,3 +136,62 @@ document.addEventListener('scroll', () => {
         el.style.transform = `translateY(${30 - (fadeInProgress * 30)}px)`;
     });
 });
+
+// --- Music Toggle Logic ---
+const music = document.getElementById('bg-music');
+const musicToggleBtn = document.getElementById('music-toggle');
+let isPlaying = false;
+
+if (musicToggleBtn && music) {
+    musicToggleBtn.addEventListener('click', () => {
+        if (isPlaying) {
+            music.pause();
+            musicToggleBtn.classList.remove('playing');
+            isPlaying = false;
+        } else {
+            music.play().then(() => {
+                musicToggleBtn.classList.add('playing');
+                isPlaying = true;
+            }).catch(error => {
+                console.log("Audio play failed:", error);
+            });
+        }
+    });
+
+    // Optional: Attempt to play on first scroll interaction (some browsers allow this)
+    const playOnInteraction = () => {
+        if (!isPlaying) {
+            music.play().then(() => {
+                musicToggleBtn.classList.add('playing');
+                isPlaying = true;
+                document.removeEventListener('scroll', playOnInteraction);
+            }).catch(e => {
+                // Autoplay blocked, wait for explicit click
+            });
+        }
+    };
+    
+    document.addEventListener('scroll', playOnInteraction, { once: true });
+}
+
+// --- Splash Screen Logic ---
+document.body.classList.add('locked'); // Lock scroll initially
+
+const splashScreen = document.getElementById('splash-screen');
+const openBtn = document.getElementById('open-invitation');
+
+if (openBtn && splashScreen) {
+    openBtn.addEventListener('click', () => {
+        // Hide splash screen
+        splashScreen.classList.add('hidden');
+        document.body.classList.remove('locked');
+        
+        // Auto-play music when entering
+        if (music && !isPlaying) {
+            music.play().then(() => {
+                musicToggleBtn.classList.add('playing');
+                isPlaying = true;
+            }).catch(e => console.log("Audio play failed on splash screen click:", e));
+        }
+    });
+}
