@@ -196,24 +196,46 @@ if (musicToggleBtn && music) {
     document.addEventListener('scroll', playOnInteraction, { once: true });
 }
 
-// --- Splash Screen Logic ---
+// --- Envelope / Splash Screen Logic ---
 document.body.classList.add('locked'); // Lock scroll initially
 
 const splashScreen = document.getElementById('splash-screen');
-const openBtn = document.getElementById('open-invitation');
+const openBtn      = document.getElementById('open-invitation');
+const flap         = document.getElementById('envelope-flap');
+const waxSeal      = document.getElementById('wax-seal');
+const letterCard   = document.getElementById('letter-card');
 
 if (openBtn && splashScreen) {
     openBtn.addEventListener('click', () => {
-        // Hide splash screen
-        splashScreen.classList.add('hidden');
-        document.body.classList.remove('locked');
-        
-        // Auto-play music when entering
-        if (music && !isPlaying) {
-            music.play().then(() => {
-                musicToggleBtn.classList.add('playing');
-                isPlaying = true;
-            }).catch(e => console.log("Audio play failed on splash screen click:", e));
-        }
+        // 1. Ocultar botón
+        openBtn.classList.add('clicked');
+
+        // 2. Romper el sello de cera
+        if (waxSeal) waxSeal.classList.add('break');
+
+        // 3. Abrir la solapa (después 400ms)
+        setTimeout(() => {
+            if (flap) flap.classList.add('open');
+        }, 400);
+
+        // 4. Hacer emerger la carta del sobre (después 900ms)
+        setTimeout(() => {
+            if (letterCard) letterCard.classList.add('emerge');
+        }, 900);
+
+        // 5. Desvanecer todo el splash y habilitar scroll (después 2.4s)
+        setTimeout(() => {
+            splashScreen.classList.add('hidden');
+            document.body.classList.remove('locked');
+
+            // Auto-play música al entrar
+            if (music && !isPlaying) {
+                music.play().then(() => {
+                    if (musicToggleBtn) musicToggleBtn.classList.add('playing');
+                    isPlaying = true;
+                }).catch(e => console.log('Audio play failed:', e));
+            }
+        }, 2400);
     });
 }
+
