@@ -29,6 +29,33 @@
             <p class="celebrant-last-name">Hernández Luna</p>
         </section>
 
+        <!-- Carrusel de Imágenes -->
+        <section class="carousel-container">
+            <div class="carousel-slide fade">
+                <img src="assets/img/caballo.png" alt="Imagen Caballo">
+            </div>
+            <div class="carousel-slide fade">
+                <img src="assets/img/persona.png" alt="Imagen Quinceañera">
+            </div>
+            <div class="carousel-slide fade">
+                <img src="assets/img/sombrero.png" alt="Imagen Sombrero">
+            </div>
+            <div class="carousel-slide fade">
+                <img src="assets/img/flores-principal.png" alt="Flores">
+            </div>
+            <div class="carousel-slide fade">
+                <img src="assets/img/rueda.png" alt="Rueda">
+            </div>
+
+            <div class="dots-container">
+                <span class="dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+                <span class="dot" onclick="currentSlide(4)"></span>
+                <span class="dot" onclick="currentSlide(5)"></span>
+            </div>
+        </section>
+
         <section id="countdown-container" class="reveal">
             <h2 class="countdown-title">Nos vemos en:</h2>
             <div id="countdown">
@@ -52,6 +79,15 @@
                     <p>segundos</p>
                 </div>
             </div>
+        </section>
+
+        <!-- Sección de Ceremonia -->
+        <section class="ceremony-details reveal">
+            <h2 class="ceremony-title">Ceremonia Religiosa</h2>
+            <p class="ceremony-time">4:00 PM</p>
+            <p class="ceremony-place">Parroquia de San Miguel Arcángel</p>
+            <p class="ceremony-address">Av. Principal #123, Centro</p>
+            <a href="#" class="btn-location" target="_blank">Ver Ubicación</a>
         </section>
     </main>
     <script src="script.js"></script>
