@@ -239,3 +239,223 @@ if (openBtn && splashScreen) {
     });
 }
 
+// --- Firebase Integración Asistencia ---
+const firebaseConfig = {
+  apiKey: "AIzaSyCfmmyyScTL1A9TUGD4mjxMFlVjg0WQQoM",
+  authDomain: "invitacion-be60d.firebaseapp.com",
+  projectId: "invitacion-be60d",
+  storageBucket: "invitacion-be60d.firebasestorage.app",
+  messagingSenderId: "634606934656",
+  appId: "1:634606934656:web:2bafaf3d9d2ce24c3d6465",
+  measurementId: "G-E4N3HG6J05"
+};
+
+// Initialize Firebase
+let app, db;
+if (typeof firebase !== 'undefined') {
+    app = firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+}
+
+// Elementos UI Asistencia
+const searchInput = document.getElementById('family-search-input');
+const searchResults = document.getElementById('search-results');
+const searchStep = document.getElementById('search-step');
+const detailsStep = document.getElementById('details-step');
+const successStep = document.getElementById('success-step');
+
+const familyNameDisplay = document.getElementById('selected-family-name');
+const totalPassesDisplay = document.getElementById('total-passes');
+const attendingCountSelect = document.getElementById('attending-count');
+const btnConfirmAttendance = document.getElementById('btn-confirm-attendance');
+const btnDeclineAttendance = document.getElementById('btn-decline-attendance');
+const btnBackToSearch = document.getElementById('btn-back-to-search');
+const btnNewSearch = document.getElementById('btn-new-search');
+
+let familiesList = [];
+let selectedFamily = null;
+
+// Cargar familias de Firestore
+if (db) {
+    db.collection('guests').get().then((snapshot) => {
+        snapshot.forEach(doc => {
+            familiesList.push({ id: doc.id, ...doc.data() });
+        });
+    }).catch(error => console.error("Error al cargar familias:", error));
+}
+
+// Búsqueda de familias
+if (searchInput) {
+    // Mostrar resultados cuando el usuario hace click en el buscador
+    searchInput.addEventListener('focus', () => {
+        renderSearchResults(searchInput.value.toLowerCase().trim());
+    });
+
+    searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase().trim();
+        renderSearchResults(term);
+    });
+
+    function renderSearchResults(term) {
+        searchResults.innerHTML = '';
+        
+        let filtered = familiesList;
+        if (term.length > 0) {
+            filtered = familiesList.filter(f => f.name.toLowerCase().includes(term));
+        }
+
+        if (filtered.length > 0) {
+            // Mostrar todas las posibilidades si buscan algo en específico, sino limitamos a 10
+            const toShow = term.length === 0 ? filtered.slice(0, 15) : filtered;
+            
+            toShow.forEach(family => {
+                const item = document.createElement('div');
+                item.className = 'search-result-item';
+                item.textContent = family.name;
+                item.addEventListener('click', () => selectFamily(family));
+                searchResults.appendChild(item);
+            });
+            searchResults.classList.remove('hidden');
+        } else {
+            const noResults = document.createElement('div');
+            noResults.className = 'search-result-item';
+            noResults.textContent = 'No se encontró la familia';
+            noResults.style.cursor = 'default';
+            searchResults.appendChild(noResults);
+            searchResults.classList.remove('hidden');
+        }
+    }
+
+    // Ocultar resultados si se hace click fuera
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.add('hidden');
+        }
+    });
+}
+
+function selectFamily(family) {
+    selectedFamily = family;
+    searchInput.value = '';
+    searchResults.classList.add('hidden');
+    
+    // Configurar Paso 2
+    familyNameDisplay.textContent = family.name;
+    const count = parseInt(family.count) || 0;
+    totalPassesDisplay.textContent = count;
+    
+    // Generar opciones del select
+    attendingCountSelect.innerHTML = '';
+    for (let i = 1; i <= count; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i === 1 ? '1 persona' : `${i} personas`;
+        attendingCountSelect.appendChild(option);
+    }
+    
+    // Seleccionar por defecto la cantidad máxima o la previamente seleccionada
+    if (family.attendingCount) {
+        attendingCountSelect.value = family.attendingCount;
+    } else {
+        attendingCountSelect.value = count;
+    }
+    
+    searchStep.classList.add('hidden');
+    detailsStep.classList.remove('hidden');
+}
+
+// Confirmar Asistencia
+if (btnConfirmAttendance) {
+    btnConfirmAttendance.addEventListener('click', () => {
+        if (!selectedFamily || !db) return;
+        
+        const attendingCount = parseInt(attendingCountSelect.value) || 0;
+        
+        // Deshabilitar botones mientras se guarda
+        btnConfirmAttendance.disabled = true;
+        btnConfirmAttendance.textContent = 'Guardando...';
+        btnDeclineAttendance.disabled = true;
+        
+        db.collection('guests').doc(selectedFamily.id).update({
+            status: 'confirmed',
+            attendingCount: attendingCount,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            // Actualizar local
+            selectedFamily.status = 'confirmed';
+            selectedFamily.attendingCount = attendingCount;
+            
+            // Mostrar éxito
+            showSuccess('¡Gracias por confirmar!', 'Los esperamos con mucha emoción.');
+        }).catch(err => {
+            console.error("Error al confirmar:", err);
+            alert("Hubo un error al confirmar. Por favor, intenta de nuevo.");
+        }).finally(() => {
+            btnConfirmAttendance.disabled = false;
+            btnConfirmAttendance.textContent = 'Confirmar Asistencia';
+            btnDeclineAttendance.disabled = false;
+        });
+    });
+}
+
+// No asistiremos
+if (btnDeclineAttendance) {
+    btnDeclineAttendance.addEventListener('click', () => {
+        if (!selectedFamily || !db) return;
+        
+        if (confirm('¿Estás seguro que deseas declinar la invitación?')) {
+            btnDeclineAttendance.disabled = true;
+            btnDeclineAttendance.textContent = 'Guardando...';
+            btnConfirmAttendance.disabled = true;
+            
+            db.collection('guests').doc(selectedFamily.id).update({
+                status: 'declined',
+                attendingCount: 0,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                selectedFamily.status = 'declined';
+                selectedFamily.attendingCount = 0;
+                
+                // Mostrar éxito
+                const icon = document.querySelector('.success-icon');
+                if (icon) icon.textContent = '♡';
+                showSuccess('Entendemos', 'Lamentamos que no puedan asistir. Gracias por avisarnos.');
+            }).catch(err => {
+                console.error("Error al declinar:", err);
+                alert("Hubo un error al guardar. Por favor, intenta de nuevo.");
+            }).finally(() => {
+                btnDeclineAttendance.disabled = false;
+                btnDeclineAttendance.textContent = 'No asistiremos';
+                btnConfirmAttendance.disabled = false;
+            });
+        }
+    });
+}
+
+function showSuccess(title, msg) {
+    document.getElementById('success-title').textContent = title;
+    document.getElementById('success-message').textContent = msg;
+    
+    detailsStep.classList.add('hidden');
+    successStep.classList.remove('hidden');
+}
+
+// Controles de navegación de vuelta
+if (btnBackToSearch) {
+    btnBackToSearch.addEventListener('click', () => {
+        detailsStep.classList.add('hidden');
+        searchStep.classList.remove('hidden');
+        selectedFamily = null;
+    });
+}
+
+if (btnNewSearch) {
+    btnNewSearch.addEventListener('click', () => {
+        successStep.classList.add('hidden');
+        searchStep.classList.remove('hidden');
+        selectedFamily = null;
+        // Reset logic para icon success
+        const icon = document.querySelector('.success-icon');
+        if (icon) icon.textContent = '✓';
+    });
+}

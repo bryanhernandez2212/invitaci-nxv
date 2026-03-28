@@ -12,6 +12,7 @@
         href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet">
 </head>
+
 <body>
 
     <!-- Pantalla de Inicio (Sobre/Carta) -->
@@ -51,7 +52,7 @@
             <!-- Botón -->
             <button id="open-invitation" class="btn-open envelope-btn">✉ Abrir Invitación</button>
         </div>
-    </div>    <!-- Audio Background -->
+    </div> <!-- Audio Background -->
     <audio id="bg-music" loop>
         <source src="assets/music/musica.mp3" type="audio/mpeg">
         Tu navegador no soporta el elemento de audio.
@@ -61,11 +62,11 @@
     </button>
 
     <main class="invitation-container simple-view">
-        
+
         <!-- Story Scroll Section -->
         <div class="scroll-story">
             <div class="sticky-story">
-                
+
                 <!-- Decoración que se desplaza -->
                 <img src="assets/img/flores-vertical.png" alt="Flores Esquina Izquierda" class="corner-flower top-left">
                 <img src="assets/img/flores-vertical.png" alt="Flores Esquina Derecha" class="corner-flower top-right">
@@ -86,7 +87,8 @@
 
                 <!-- Text that appears later -->
                 <div class="story-bottom-container">
-                    <p class="story-text">Dejo atrás el mundo y entro a uno nuevo, aunque a veces dudo o temo, estoy llena de esperanzas y sueños.</p>
+                    <p class="story-text">Dejo atrás el mundo y entro a uno nuevo, aunque a veces dudo o temo, estoy
+                        llena de esperanzas y sueños.</p>
                     <p class="story-text">Tengo la sensación de que estoy construyendo mi propio camino.</p>
                     <p class="story-text">Siento alegría y quiero compartirlo rodeada de todos los que quiero.</p>
                 </div>
@@ -148,13 +150,13 @@
                     <p>segundos</p>
                 </div>
             </div>
-        </section>        <!-- Padres y Padrinos -->
+        </section> <!-- Padres y Padrinos -->
         <section class="parents-godparents reveal">
             <div class="parents-block">
                 <h3 class="role-title">Padres</h3>
                 <p class="names-text">Ismael Hernández Trujillo<br>&<br>Guadalupe del Carmen Luna Hernández</p>
             </div>
-            
+
             <div class="godparents-block">
                 <h3 class="role-title">Padrinos</h3>
                 <p class="names-text">Por definir y Confirmar</p>
@@ -188,22 +190,65 @@
             </div>
         </div>
         <!-- Sección de Confirmación -->
-        <section class="confirmation-section reveal">
+        <section class="confirmation-section reveal" id="confirmation-section">
             <div class="confirmation-inner">
                 <p class="confirmation-decorative">✦ ✦ ✦</p>
                 <h2 class="confirmation-title">Confirmación de Asistencia</h2>
-                <p class="confirmation-text">
+                <p class="confirmation-text" id="confirmation-instructions">
                     Tu presencia es el mejor regalo.<br>
-                    Por favor confirma tu asistencia antes del <strong>10 de septiembre de 2026</strong>.
+                    Por favor busca a tu familia para confirmar tu asistencia antes del <strong>10 de septiembre de
+                        2026</strong>.
                 </p>
-                <a href="https://wa.me/521XXXXXXXXXX?text=¡Hola!%20Confirmo%20mi%20asistencia%20a%20los%20XV%20de%20Yareni%20Guadalupe%20🌸"
-                   class="btn-confirm" target="_blank">
-                    Confirmar por WhatsApp
-                </a>
+
+                <!-- Contenedor del Sistema de Asistencia -->
+                <div class="attendance-system" id="attendance-system">
+                    <!-- Paso 1: Búsqueda de Familia -->
+                    <div class="search-step" id="search-step">
+                        <div class="search-container">
+                            <input type="text" id="family-search-input"
+                                placeholder="Escribe tus apellidos (ej. Hernández Luna)..." autocomplete="off">
+                            <div class="search-results hidden" id="search-results"></div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 2: Detalles de Asistencia (Oculto inicialmente) -->
+                    <div class="details-step hidden" id="details-step">
+                        <h3 class="family-name-display" id="selected-family-name">Familia</h3>
+                        <div class="passes-info">
+                            <p>Tienen <strong id="total-passes" class="highlight-number">0</strong> pases asignados</p>
+                        </div>
+
+                        <div class="attendance-selection" id="attendance-selection">
+                            <label for="attending-count">¿Cuántos asistirán?</label>
+                            <select id="attending-count" class="custom-select"></select>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn-primary-action confirm-btn" id="btn-confirm-attendance">Confirmar
+                                Asistencia</button>
+                            <button class="btn-secondary-action decline-btn" id="btn-decline-attendance">No
+                                asistiremos</button>
+                        </div>
+
+                        <button class="btn-link" id="btn-back-to-search">Cancelar / Buscar otra familia</button>
+                    </div>
+
+                    <!-- Paso 3: Mensaje de Éxito (Oculto inicialmente) -->
+                    <div class="success-step hidden" id="success-step">
+                        <div class="success-icon">✓</div>
+                        <h3 id="success-title">¡Gracias por confirmar!</h3>
+                        <p id="success-message">Los esperamos con mucha emoción.</p>
+                        <button class="btn-link" id="btn-new-search">Confirmar otra familia</button>
+                    </div>
+                </div>
+
                 <p class="confirmation-footer">— Con amor, Yareni Guadalupe —</p>
             </div>
         </section>
     </main>
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="script.js"></script>
 </body>
 
