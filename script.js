@@ -141,23 +141,36 @@ document.addEventListener('scroll', () => {
     });
 
 
-    // --- Transición Ceremonia → Recepción ---
-    const eventsSection = document.getElementById('events-scroll');
-    const panelCeremonia = document.getElementById('panel-ceremonia');
-    const panelRecepcion = document.getElementById('panel-recepcion');
-
-    if (eventsSection && panelCeremonia && panelRecepcion) {
-        const top = eventsSection.offsetTop;
-        const height = eventsSection.offsetHeight;
-        const progress = Math.min(Math.max((scrollY - top) / (height * 0.5), 0), 1);
-
-        panelCeremonia.style.opacity = 1 - progress;
-        panelCeremonia.style.transform = `translateY(${-progress * 40}px)`;
-
-        panelRecepcion.style.opacity = progress;
-        panelRecepcion.style.transform = `translateY(${(1 - progress) * 40}px)`;
-    }
 });
+
+// --- Libro Interactivo de Eventos ---
+const eventBook = document.getElementById('event-book');
+const layerCover = document.getElementById('layer-cover');
+const layerCeremony = document.getElementById('layer-ceremony');
+const instructionText = document.querySelector('.tap-instruction');
+
+let bookState = 0; // 0: Portada, 1: Ceremonia, 2: Recepción
+
+if (eventBook) {
+    eventBook.addEventListener('click', () => {
+        if (bookState === 0) {
+            // Clic 1: Abre la portada (muestra ceremonia)
+            if (instructionText) instructionText.style.opacity = '0';
+            layerCover.classList.add('flipped');
+            bookState = 1;
+        } else if (bookState === 1) {
+            // Clic 2: Voltea página de ceremonia (muestra recepción)
+            layerCeremony.classList.add('flipped');
+            bookState = 2;
+        } else if (bookState === 2) {
+            // Clic 3: Cierra el libro por completo
+            layerCover.classList.remove('flipped');
+            layerCeremony.classList.remove('flipped');
+            if (instructionText) instructionText.style.opacity = '1';
+            bookState = 0;
+        }
+    });
+}
 
 // --- Music Toggle Logic ---
 const music = document.getElementById('bg-music');
@@ -199,16 +212,29 @@ if (musicToggleBtn && music) {
 // --- Envelope / Splash Screen Logic ---
 document.body.classList.add('locked'); // Lock scroll initially
 
-const splashScreen = document.getElementById('splash-screen');
-const openBtn      = document.getElementById('open-invitation');
-const flap         = document.getElementById('envelope-flap');
-const waxSeal      = document.getElementById('wax-seal');
-const letterCard   = document.getElementById('letter-card');
+const splashScreen  = document.getElementById('splash-screen');
+const openBtn       = document.querySelector('.envelope'); // El sobre
+const instruction   = document.getElementById('open-instruction');
+const flap          = document.getElementById('envelope-flap');
+const waxSeal       = document.getElementById('wax-seal');
+const envelopeScene = document.querySelector('.envelope-scene');
 
 if (openBtn && splashScreen) {
     openBtn.addEventListener('click', () => {
-        // 1. Ocultar botón
-        openBtn.classList.add('clicked');
+        // 1. Ocultar instrucción y deshabilitar más clics
+        if (instruction) instruction.classList.add('hidden');
+        openBtn.style.pointerEvents = 'none';
+
+        // Reproducir música y efecto de sonido inmediatamente al tocar el sobre
+        const sfxOpen = document.getElementById('sfx-open');
+        if (sfxOpen) sfxOpen.play().catch(e => console.log('SFX bloqueado:', e));
+        
+        if (music && !isPlaying) {
+            music.play().then(() => {
+                if (musicToggleBtn) musicToggleBtn.classList.add('playing');
+                isPlaying = true;
+            }).catch(e => console.log('Audio background bloqueado:', e));
+        }
 
         // 2. Romper el sello de cera
         if (waxSeal) waxSeal.classList.add('break');
@@ -218,23 +244,15 @@ if (openBtn && splashScreen) {
             if (flap) flap.classList.add('open');
         }, 400);
 
-        // 4. Hacer emerger la carta del sobre (después 900ms)
+        // 4. Efecto de entrar al sobre (después de abrir solapa)
         setTimeout(() => {
-            if (letterCard) letterCard.classList.add('emerge');
+            if (envelopeScene) envelopeScene.classList.add('zoom-in');
         }, 900);
 
         // 5. Desvanecer todo el splash y habilitar scroll (después 2.4s)
         setTimeout(() => {
             splashScreen.classList.add('hidden');
             document.body.classList.remove('locked');
-
-            // Auto-play música al entrar
-            if (music && !isPlaying) {
-                music.play().then(() => {
-                    if (musicToggleBtn) musicToggleBtn.classList.add('playing');
-                    isPlaying = true;
-                }).catch(e => console.log('Audio play failed:', e));
-            }
         }, 2400);
     });
 }
@@ -258,8 +276,7 @@ if (typeof firebase !== 'undefined') {
 }
 
 // Elementos UI Asistencia
-const searchInput = document.getElementById('family-search-input');
-const searchResults = document.getElementById('search-results');
+const familySelect = document.getElementById('family-select');
 const searchStep = document.getElementById('search-step');
 const detailsStep = document.getElementById('details-step');
 const successStep = document.getElementById('success-step');
@@ -278,66 +295,49 @@ let selectedFamily = null;
 // Cargar familias de Firestore
 if (db) {
     db.collection('guests').get().then((snapshot) => {
+        let arr = [];
         snapshot.forEach(doc => {
-            familiesList.push({ id: doc.id, ...doc.data() });
+            arr.push({ id: doc.id, ...doc.data() });
         });
+        
+        // Ordenar alfabéticamente
+        arr.sort((a, b) => a.name.localeCompare(b.name));
+        familiesList = arr;
+
+        if (familySelect) {
+            familySelect.innerHTML = '<option value="" disabled selected>Selecciona tu familia...</option>';
+            
+            // Filtrar las familias que no han confirmado o declinado
+            const pendingFamilies = arr.filter(f => !f.status || f.status === 'pending' || f.status === '');
+            
+            pendingFamilies.forEach(family => {
+                const option = document.createElement('option');
+                option.value = family.id;
+                option.textContent = family.name;
+                familySelect.appendChild(option);
+            });
+            
+            if (pendingFamilies.length === 0) {
+                familySelect.innerHTML = '<option value="" disabled selected>Todas las invitaciones han sido confirmadas</option>';
+                familySelect.disabled = true;
+            }
+        }
     }).catch(error => console.error("Error al cargar familias:", error));
 }
 
-// Búsqueda de familias
-if (searchInput) {
-    // Mostrar resultados cuando el usuario hace click en el buscador
-    searchInput.addEventListener('focus', () => {
-        renderSearchResults(searchInput.value.toLowerCase().trim());
-    });
-
-    searchInput.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase().trim();
-        renderSearchResults(term);
-    });
-
-    function renderSearchResults(term) {
-        searchResults.innerHTML = '';
-        
-        let filtered = familiesList;
-        if (term.length > 0) {
-            filtered = familiesList.filter(f => f.name.toLowerCase().includes(term));
-        }
-
-        if (filtered.length > 0) {
-            // Mostrar todas las posibilidades si buscan algo en específico, sino limitamos a 10
-            const toShow = term.length === 0 ? filtered.slice(0, 15) : filtered;
-            
-            toShow.forEach(family => {
-                const item = document.createElement('div');
-                item.className = 'search-result-item';
-                item.textContent = family.name;
-                item.addEventListener('click', () => selectFamily(family));
-                searchResults.appendChild(item);
-            });
-            searchResults.classList.remove('hidden');
-        } else {
-            const noResults = document.createElement('div');
-            noResults.className = 'search-result-item';
-            noResults.textContent = 'No se encontró la familia';
-            noResults.style.cursor = 'default';
-            searchResults.appendChild(noResults);
-            searchResults.classList.remove('hidden');
-        }
-    }
-
-    // Ocultar resultados si se hace click fuera
-    document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-            searchResults.classList.add('hidden');
+// Búsqueda de familias - Cambiado a Select
+if (familySelect) {
+    familySelect.addEventListener('change', (e) => {
+        const familyId = e.target.value;
+        const family = familiesList.find(f => f.id === familyId);
+        if (family) {
+            selectFamily(family);
         }
     });
 }
 
 function selectFamily(family) {
     selectedFamily = family;
-    searchInput.value = '';
-    searchResults.classList.add('hidden');
     
     // Configurar Paso 2
     familyNameDisplay.textContent = family.name;
@@ -385,6 +385,17 @@ if (btnConfirmAttendance) {
             selectedFamily.status = 'confirmed';
             selectedFamily.attendingCount = attendingCount;
             
+            // Remover del select en vivo
+            if (familySelect) {
+                const option = familySelect.querySelector(`option[value="${selectedFamily.id}"]`);
+                if (option) option.remove();
+                
+                if (familySelect.options.length <= 1) { // Solo queda el placeholder
+                    familySelect.innerHTML = '<option value="" disabled selected>Todas las invitaciones han sido confirmadas</option>';
+                    familySelect.disabled = true;
+                }
+            }
+            
             // Mostrar éxito
             showSuccess('¡Gracias por confirmar!', 'Los esperamos con mucha emoción.');
         }).catch(err => {
@@ -416,6 +427,17 @@ if (btnDeclineAttendance) {
                 selectedFamily.status = 'declined';
                 selectedFamily.attendingCount = 0;
                 
+                // Remover del select en vivo
+                if (familySelect) {
+                    const option = familySelect.querySelector(`option[value="${selectedFamily.id}"]`);
+                    if (option) option.remove();
+                    
+                    if (familySelect.options.length <= 1) {
+                        familySelect.innerHTML = '<option value="" disabled selected>Todas las invitaciones han sido confirmadas</option>';
+                        familySelect.disabled = true;
+                    }
+                }
+                
                 // Mostrar éxito
                 const icon = document.querySelector('.success-icon');
                 if (icon) icon.textContent = '♡';
@@ -446,6 +468,7 @@ if (btnBackToSearch) {
         detailsStep.classList.add('hidden');
         searchStep.classList.remove('hidden');
         selectedFamily = null;
+        if (familySelect) familySelect.value = '';
     });
 }
 
@@ -454,6 +477,7 @@ if (btnNewSearch) {
         successStep.classList.add('hidden');
         searchStep.classList.remove('hidden');
         selectedFamily = null;
+        if (familySelect) familySelect.value = '';
         // Reset logic para icon success
         const icon = document.querySelector('.success-icon');
         if (icon) icon.textContent = '✓';

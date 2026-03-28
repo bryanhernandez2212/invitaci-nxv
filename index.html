@@ -37,22 +37,17 @@
                         </div>
                         <p class="envelope-label">Mis XV Años</p>
                         <p class="envelope-name">Yareni Guadalupe</p>
-                    </div>
-                </div>
-            </div>
-            <!-- Carta que sale del sobre -->
-            <div class="letter-card" id="letter-card">
-                <div class="letter-inner">
-                    <p class="letter-pre">Con mucho amor te invita</p>
-                    <h1 class="letter-title">Mis XV Años</h1>
-                    <p class="letter-name">Yareni Guadalupe</p>
-                    <div class="letter-divider"></div>
-                </div>
-            </div>
-            <!-- Botón -->
-            <button id="open-invitation" class="btn-open envelope-btn">✉ Abrir Invitación</button>
-        </div>
-    </div> <!-- Audio Background -->
+                    </div> <!-- CIERRA .envelope-front -->
+                </div> <!-- CIERRA .envelope-body -->
+            </div> <!-- CIERRA .envelope -->
+            <!-- Instrucción debajo del sobre -->
+            <p id="open-instruction" class="tap-instruction">✦ Toca el sobre para abrir ✦</p>
+        </div> <!-- CIERRA .envelope-scene -->
+    </div> <!-- CIERRA .splash-screen -->
+    <!-- Audio Background -->
+    <audio id="sfx-open" preload="auto">
+        <source src="assets/music/abrir_sobre.mp3" type="audio/mpeg">
+    </audio>
     <audio id="bg-music" loop>
         <source src="assets/music/musica.mp3" type="audio/mpeg">
         Tu navegador no soporta el elemento de audio.
@@ -163,32 +158,47 @@
             </div>
         </section>
 
-        <!-- Scroll de Ceremonia → Recepción -->
-        <div class="events-scroll-section" id="events-scroll">
-            <div class="events-sticky" id="events-sticky">
-
-                <!-- Panel: Ceremonia Religiosa -->
-                <div class="event-panel" id="panel-ceremonia">
-                    <img src="assets/img/iglesia.png" alt="Iglesia" class="iglesia-img">
-                    <h2 class="ceremony-title">Ceremonia Religiosa</h2>
-                    <p class="ceremony-time">4:00 PM</p>
-                    <p class="ceremony-place">Parroquia de San Miguel Arcángel</p>
-                    <p class="ceremony-address">Av. Principal #123, Centro</p>
-                    <a href="#" class="btn-location" target="_blank">Ver Ubicación</a>
+        <!-- Libro Interactivo de Eventos -->
+        <section class="book-section reveal" id="events-book-section" style="text-align: center; margin: 80px 0;">
+            <p class="tap-instruction" style="opacity: 1; animation: none; margin-bottom: 25px; font-size: 0.9rem;">✦ Toca el libro para leer el itinerario ✦</p>
+            
+            <div class="event-book" id="event-book">
+                <!-- Capa 1: Portada -->
+                <div class="book-layer" id="layer-cover">
+                    <div class="cover-design">
+                        <div class="wax-seal" style="transform: scale(0.8); margin: 0 auto 30px auto; position: static;">
+                            <span class="seal-text">XV</span>
+                        </div>
+                        <h2 class="book-cover-title">Itinerario de Eventos</h2>
+                        <p class="book-cover-subtitle" style="margin-top:20px; font-family:'Playfair Display',serif; font-style:italic; color:#888;">Toca para abrir</p>
+                    </div>
                 </div>
 
-                <!-- Panel: Recepción -->
-                <div class="event-panel" id="panel-recepcion">
-                    <img src="assets/img/ceremonia.png" alt="Recepción" class="iglesia-img">
-                    <h2 class="ceremony-title">Recepción</h2>
-                    <p class="ceremony-time">A continuación</p>
-                    <p class="ceremony-place">Los esperamos después a la recepción</p>
-                    <p class="ceremony-address">en el Salón 123 ubicado detrás de la iglesia</p>
-                    <a href="#" class="btn-location" target="_blank">Ver Ubicación</a>
+                <!-- Capa 2: Ceremonia -->
+                <div class="book-layer" id="layer-ceremony">
+                    <div class="page-content">
+                        <img src="assets/img/iglesia.png" alt="Iglesia" class="iglesia-img" style="width: 140px; margin-bottom: 20px;">
+                        <h2 class="ceremony-title" style="font-size: 1.8rem;">Ceremonia</h2>
+                        <p class="ceremony-time" style="font-size: 1.3rem;">4:00 PM</p>
+                        <p class="ceremony-place" style="font-size: 1.1rem;">Parroquia San Miguel Arcángel</p>
+                        <p class="ceremony-address" style="font-size: 0.95rem;">Av. Principal #123, Centro</p>
+                        <a href="#" class="btn-location" target="_blank" style="padding: 10px 25px; font-size: 0.85rem; margin-top: 20px;">Ubicación</a>
+                    </div>
                 </div>
 
+                <!-- Capa 3: Recepción -->
+                <div class="book-layer" id="layer-reception">
+                    <div class="page-content">
+                        <img src="assets/img/ceremonia.png" alt="Recepción" class="iglesia-img" style="width: 140px; margin-bottom: 20px;">
+                        <h2 class="ceremony-title" style="font-size: 1.8rem;">Recepción</h2>
+                        <p class="ceremony-time" style="font-size: 1.3rem;">Al terminar</p>
+                        <p class="ceremony-place" style="font-size: 1.1rem;">Salón 123 (detrás de la iglesia)</p>
+                        <a href="#" class="btn-location" target="_blank" style="padding: 10px 25px; font-size: 0.85rem; margin-top: 25px;">Ubicación</a>
+                        <p class="tap-instruction" style="font-size: 0.75rem; margin-top: 40px; opacity: 0.6; animation: none;">Toca para cerrar libro</p>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
         <!-- Sección de Confirmación -->
         <section class="confirmation-section reveal" id="confirmation-section">
             <div class="confirmation-inner">
@@ -205,9 +215,10 @@
                     <!-- Paso 1: Búsqueda de Familia -->
                     <div class="search-step" id="search-step">
                         <div class="search-container">
-                            <input type="text" id="family-search-input"
-                                placeholder="Escribe tus apellidos (ej. Hernández Luna)..." autocomplete="off">
-                            <div class="search-results hidden" id="search-results"></div>
+                            <label for="family-select" class="instruction-label">Por favor, selecciona tu familia:</label>
+                            <select id="family-select" class="custom-select" style="max-width: 100%; text-align: center;">
+                                <option value="" disabled selected>Cargando familias...</option>
+                            </select>
                         </div>
                     </div>
 
@@ -230,15 +241,13 @@
                                 asistiremos</button>
                         </div>
 
-                        <button class="btn-link" id="btn-back-to-search">Cancelar / Buscar otra familia</button>
+                        <button class="btn-link" id="btn-back-to-search">Cancelar selección</button>
                     </div>
 
-                    <!-- Paso 3: Mensaje de Éxito (Oculto inicialmente) -->
                     <div class="success-step hidden" id="success-step">
                         <div class="success-icon">✓</div>
                         <h3 id="success-title">¡Gracias por confirmar!</h3>
                         <p id="success-message">Los esperamos con mucha emoción.</p>
-                        <button class="btn-link" id="btn-new-search">Confirmar otra familia</button>
                     </div>
                 </div>
 
