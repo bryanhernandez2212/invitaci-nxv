@@ -257,23 +257,8 @@ if (openBtn && splashScreen) {
     });
 }
 
-// --- Firebase Integración Asistencia ---
-const firebaseConfig = {
-  apiKey: "AIzaSyCfmmyyScTL1A9TUGD4mjxMFlVjg0WQQoM",
-  authDomain: "invitacion-be60d.firebaseapp.com",
-  projectId: "invitacion-be60d",
-  storageBucket: "invitacion-be60d.firebasestorage.app",
-  messagingSenderId: "634606934656",
-  appId: "1:634606934656:web:2bafaf3d9d2ce24c3d6465",
-  measurementId: "G-E4N3HG6J05"
-};
-
-// Initialize Firebase
-let app, db;
-if (typeof firebase !== 'undefined') {
-    app = firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-}
+// --- API Integración Asistencia ---
+const API_URL = 'https://backinvitacionc.vercel.app/guests';
 
 // Elementos UI Asistencia
 const familySelect = document.getElementById('family-select');
@@ -292,13 +277,11 @@ const btnNewSearch = document.getElementById('btn-new-search');
 let familiesList = [];
 let selectedFamily = null;
 
-// Cargar familias de Firestore
-if (db) {
-    db.collection('guests').get().then((snapshot) => {
-        let arr = [];
-        snapshot.forEach(doc => {
-            arr.push({ id: doc.id, ...doc.data() });
-        });
+// Cargar familias desde la API
+fetch(API_URL)
+    .then(response => response.json())
+    .then(data => {
+        let arr = data.data || [];
         
         // Ordenar alfabéticamente
         arr.sort((a, b) => a.name.localeCompare(b.name));
@@ -307,32 +290,46 @@ if (db) {
         if (familySelect) {
             familySelect.innerHTML = '<option value="" disabled selected>Selecciona tu familia...</option>';
             
-            // Filtrar las familias que no han confirmado o declinado
-            const pendingFamilies = arr.filter(f => !f.status || f.status === 'pending' || f.status === '');
-            
-            pendingFamilies.forEach(family => {
+            // Mostrar todas las familias sin filtrar
+            arr.forEach(family => {
                 const option = document.createElement('option');
                 option.value = family.id;
                 option.textContent = family.name;
                 familySelect.appendChild(option);
             });
             
-            if (pendingFamilies.length === 0) {
-                familySelect.innerHTML = '<option value="" disabled selected>Todas las invitaciones han sido confirmadas</option>';
+            if (arr.length === 0) {
+                familySelect.innerHTML = '<option value="" disabled selected>No se encontraron familias</option>';
                 familySelect.disabled = true;
             }
         }
-    }).catch(error => console.error("Error al cargar familias:", error));
-}
+    })
+    .catch(error => console.error("Error al cargar familias:", error));
 
 // Búsqueda de familias - Cambiado a Select
 if (familySelect) {
     familySelect.addEventListener('change', (e) => {
         const familyId = e.target.value;
-        const family = familiesList.find(f => f.id === familyId);
-        if (family) {
-            selectFamily(family);
-        }
+        
+        // Deshabilitar temporalmente mientras se hace la petición
+        familySelect.disabled = true;
+        
+        fetch(`${API_URL}/${familyId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Asumiendo que la API devuelve los datos directamente o en 'data'
+                const family = data.data || data;
+                if (family) {
+                    selectFamily(family);
+                }
+            })
+            .catch(error => {
+                console.error("Error al obtener detalles de la familia:", error);
+                alert("Hubo un error al cargar los datos. Intenta de nuevo.");
+            })
+            .finally(() => {
+                familySelect.disabled = false;
+            });
     });
 }
 
@@ -367,7 +364,7 @@ function selectFamily(family) {
 // Confirmar Asistencia
 if (btnConfirmAttendance) {
     btnConfirmAttendance.addEventListener('click', () => {
-        if (!selectedFamily || !db) return;
+        if (!selectedFamily) return;
         
         const attendingCount = parseInt(attendingCountSelect.value) || 0;
         
@@ -376,11 +373,18 @@ if (btnConfirmAttendance) {
         btnConfirmAttendance.textContent = 'Guardando...';
         btnDeclineAttendance.disabled = true;
         
-        db.collection('guests').doc(selectedFamily.id).update({
-            status: 'confirmed',
-            attendingCount: attendingCount,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
+        // Petición de actualización a la API (Asumiendo método PATCH al endpoint del invitado)
+        fetch(`${API_URL}/${selectedFamily.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                status: 'confirmed',
+                attendingCount: attendingCount
+            })
+        }).then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
             // Actualizar local
             selectedFamily.status = 'confirmed';
             selectedFamily.attendingCount = attendingCount;
@@ -412,18 +416,25 @@ if (btnConfirmAttendance) {
 // No asistiremos
 if (btnDeclineAttendance) {
     btnDeclineAttendance.addEventListener('click', () => {
-        if (!selectedFamily || !db) return;
+        if (!selectedFamily) return;
         
         if (confirm('¿Estás seguro que deseas declinar la invitación?')) {
             btnDeclineAttendance.disabled = true;
             btnDeclineAttendance.textContent = 'Guardando...';
             btnConfirmAttendance.disabled = true;
             
-            db.collection('guests').doc(selectedFamily.id).update({
-                status: 'declined',
-                attendingCount: 0,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
+            // Petición de actualización a la API
+            fetch(`${API_URL}/${selectedFamily.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    status: 'declined',
+                    attendingCount: 0
+                })
+            }).then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
                 selectedFamily.status = 'declined';
                 selectedFamily.attendingCount = 0;
                 
