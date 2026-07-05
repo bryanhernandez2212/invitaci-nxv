@@ -1088,6 +1088,165 @@ body.locked {
     margin-bottom: 20px;
 }
 
+/* --- Modal: Nota de Regalos --- */
+.gift-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: rgba(30, 20, 10, 0.6);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.gift-modal-overlay.hidden {
+    display: none;
+}
+
+.gift-modal-overlay.show {
+    opacity: 1;
+}
+
+.gift-modal-box {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: var(--bg-white);
+    border: 1px solid #D4AF37;
+    border-radius: 10px;
+    padding: 40px 30px 30px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    transform: scale(0.8) translateY(20px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+}
+
+.gift-modal-overlay.show .gift-modal-box {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.gift-modal-box::before,
+.gift-modal-box::after {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background-color: var(--bg-white);
+    border: 1px solid #D4AF37;
+    transform: translateX(-50%) rotate(45deg);
+    left: 50%;
+}
+
+.gift-modal-box::before { top: -5px; }
+.gift-modal-box::after { bottom: -5px; }
+
+.gift-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: none;
+    color: #bbb;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.gift-modal-close:hover {
+    color: #b58900;
+}
+
+.gift-modal-icon {
+    font-size: 2.4rem;
+    margin-bottom: 10px;
+    animation: giftBounce 1.8s ease-in-out infinite;
+}
+
+@keyframes giftBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-6px) rotate(-4deg); }
+}
+
+.gift-modal-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.15rem;
+    font-weight: normal;
+    letter-spacing: 2px;
+    color: #b58900;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+.gift-modal-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.98rem;
+    color: #666;
+    line-height: 1.75;
+    margin-bottom: 20px;
+}
+
+.gift-modal-options {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.gift-option {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    color: #b58900;
+    background-color: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 20px;
+    padding: 6px 16px;
+    white-space: nowrap;
+}
+
+.gift-modal-highlight {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.5rem;
+    color: #D4AF37;
+    line-height: 1.5;
+    padding-top: 14px;
+    margin-bottom: 24px;
+    border-top: 1px dashed rgba(212, 175, 55, 0.35);
+}
+
+.gift-modal-btn {
+    display: inline-block;
+    padding: 12px 32px;
+    background-color: #D4AF37;
+    color: #fff;
+    border: none;
+    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+}
+
+.gift-modal-btn:hover {
+    background-color: #b58900;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }

@@ -452,7 +452,7 @@ if (btnDeclineAttendance) {
                 // Mostrar éxito
                 const icon = document.querySelector('.success-icon');
                 if (icon) icon.textContent = '♡';
-                showSuccess('Entendemos', 'Lamentamos que no puedan asistir. Gracias por avisarnos.');
+                showSuccess('Entendemos', 'Lamentamos que no puedan asistir. Gracias por avisarnos.', false);
             }).catch(err => {
                 console.error("Error al declinar:", err);
                 alert("Hubo un error al guardar. Por favor, intenta de nuevo.");
@@ -465,12 +465,41 @@ if (btnDeclineAttendance) {
     });
 }
 
-function showSuccess(title, msg) {
+function showSuccess(title, msg, showGiftModal = true) {
     document.getElementById('success-title').textContent = title;
     document.getElementById('success-message').textContent = msg;
-    
+
     detailsStep.classList.add('hidden');
     successStep.classList.remove('hidden');
+
+    if (showGiftModal) {
+        setTimeout(openGiftModal, 900);
+    }
+}
+
+// --- Modal: Nota de Regalos ---
+const giftModalOverlay = document.getElementById('gift-modal-overlay');
+const giftModalClose = document.getElementById('gift-modal-close');
+const giftModalBtn = document.getElementById('gift-modal-btn');
+
+function openGiftModal() {
+    if (!giftModalOverlay) return;
+    giftModalOverlay.classList.remove('hidden');
+    requestAnimationFrame(() => giftModalOverlay.classList.add('show'));
+}
+
+function closeGiftModal() {
+    if (!giftModalOverlay) return;
+    giftModalOverlay.classList.remove('show');
+    setTimeout(() => giftModalOverlay.classList.add('hidden'), 350);
+}
+
+if (giftModalOverlay) {
+    giftModalClose.addEventListener('click', closeGiftModal);
+    giftModalBtn.addEventListener('click', closeGiftModal);
+    giftModalOverlay.addEventListener('click', (e) => {
+        if (e.target === giftModalOverlay) closeGiftModal();
+    });
 }
 
 // Controles de navegación de vuelta

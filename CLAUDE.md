@@ -41,3 +41,5 @@ When bumping `script.js`, the `<script>` tag in `index.html` uses a cache-bustin
 **Styling**: single `style.css` (~1200 lines) organized with `/* --- Section --- */` comment headers matching the HTML sections (decoración fija, scroll story, padres/padrinos, carousel, event book, splash/envelope, música, confirmación). Fonts are loaded from Google Fonts (`Great Vibes`, `Cinzel`, `Playfair Display`) via `<link>` in `index.html`'s `<head>`.
 
 **Assets**: `assets/img/` (decorative PNGs used across hero, carousel, and event book) and `assets/music/` (background music + envelope-open SFX).
+
+**Dead code note**: `script.js` has a "Simple reveal animation on scroll" `IntersectionObserver` block that watches `.section, .card` elements and adds a `.reveal` class to fade them in — but no element in `index.html` carries those classes (sections use their own classes like `confirmation-section reveal`, with `reveal` already hardcoded), so the observer never fires. Visibility of those sections is not scroll-driven; don't assume this block is wiring up an active effect when touching scroll behavior.
