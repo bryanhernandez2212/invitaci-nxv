@@ -225,6 +225,34 @@
                                 <option value="" disabled selected>Cargando familias...</option>
                             </select>
                         </div>
+
+                        <!-- Alternativa: Amigos de la quinceañera -->
+                        <div class="friend-rsvp" id="friend-rsvp">
+                            <button class="btn-link" id="btn-friend-toggle">¿Eres amigo/a de la quinceañera?</button>
+
+                            <div class="friend-options-step hidden" id="friend-options-step">
+                                <p class="instruction-label">¿Podrás acompañarnos?</p>
+                                <div class="action-buttons">
+                                    <button class="btn-primary-action" id="btn-friend-yes">Sí, voy a asistir</button>
+                                    <button class="btn-secondary-action" id="btn-friend-no">No podré asistir</button>
+                                </div>
+                            </div>
+
+                            <div class="friend-name-step hidden" id="friend-name-step">
+                                <label for="friend-name-input" class="instruction-label">¿Cuál es tu nombre?</label>
+                                <input type="text" id="friend-name-input" class="custom-input" placeholder="Tu nombre completo" maxlength="100">
+                                <p class="friend-error hidden" id="friend-name-error">Por favor escribe tu nombre.</p>
+                                <div class="action-buttons">
+                                    <button class="btn-primary-action" id="btn-friend-submit">Confirmar Asistencia</button>
+                                </div>
+                                <button class="btn-link" id="btn-friend-back">Cancelar</button>
+                            </div>
+
+                            <div class="friend-success-step hidden" id="friend-success-step">
+                                <div class="success-icon" id="friend-success-icon">✓</div>
+                                <p id="friend-success-message"></p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Paso 2: Detalles de Asistencia (Oculto inicialmente) -->
@@ -284,7 +312,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=5"></script>
 </body>
 
 </html>

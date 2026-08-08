@@ -465,6 +465,104 @@ if (btnDeclineAttendance) {
     });
 }
 
+// --- API Integración Amigos (RSVP sin familia) ---
+const FRIEND_API_URL = 'https://backinvitacionc.vercel.app/amigos/confirmar';
+
+const btnFriendToggle = document.getElementById('btn-friend-toggle');
+const friendOptionsStep = document.getElementById('friend-options-step');
+const friendNameStep = document.getElementById('friend-name-step');
+const friendSuccessStep = document.getElementById('friend-success-step');
+const friendNameInput = document.getElementById('friend-name-input');
+const friendNameError = document.getElementById('friend-name-error');
+const friendSuccessIcon = document.getElementById('friend-success-icon');
+const friendSuccessMessage = document.getElementById('friend-success-message');
+const btnFriendYes = document.getElementById('btn-friend-yes');
+const btnFriendNo = document.getElementById('btn-friend-no');
+const btnFriendBack = document.getElementById('btn-friend-back');
+const btnFriendSubmit = document.getElementById('btn-friend-submit');
+
+function hideFriendSteps() {
+    friendOptionsStep.classList.add('hidden');
+    friendNameStep.classList.add('hidden');
+    friendSuccessStep.classList.add('hidden');
+}
+
+function showFriendResult(icon, message) {
+    hideFriendSteps();
+    friendSuccessIcon.textContent = icon;
+    friendSuccessMessage.textContent = message;
+    friendSuccessStep.classList.remove('hidden');
+}
+
+if (btnFriendToggle) {
+    btnFriendToggle.addEventListener('click', () => {
+        const isHidden = friendOptionsStep.classList.contains('hidden');
+        hideFriendSteps();
+        if (isHidden) {
+            friendOptionsStep.classList.remove('hidden');
+        }
+    });
+}
+
+if (btnFriendYes) {
+    btnFriendYes.addEventListener('click', () => {
+        hideFriendSteps();
+        friendNameStep.classList.remove('hidden');
+        friendNameInput.focus();
+    });
+}
+
+if (btnFriendNo) {
+    btnFriendNo.addEventListener('click', () => {
+        showFriendResult('♡', 'Gracias por avisarnos, ¡te extrañaremos!');
+    });
+}
+
+if (btnFriendBack) {
+    btnFriendBack.addEventListener('click', () => {
+        friendNameInput.value = '';
+        friendNameError.classList.add('hidden');
+        hideFriendSteps();
+        friendOptionsStep.classList.remove('hidden');
+    });
+}
+
+if (btnFriendSubmit) {
+    btnFriendSubmit.addEventListener('click', () => {
+        const name = friendNameInput.value.trim();
+
+        if (!name) {
+            friendNameError.classList.remove('hidden');
+            return;
+        }
+        friendNameError.classList.add('hidden');
+
+        btnFriendSubmit.disabled = true;
+        btnFriendSubmit.textContent = 'Guardando...';
+
+        fetch(FRIEND_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name })
+        }).then(async response => {
+            if (response.status === 201) {
+                showFriendResult('✓', `¡Gracias ${name}, te esperamos!`);
+            } else {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.error || 'Hubo un error al confirmar. Intenta de nuevo.');
+            }
+        }).catch(err => {
+            console.error('Error al confirmar amigo:', err);
+            alert(err.message || 'Hubo un error al confirmar. Intenta de nuevo.');
+        }).finally(() => {
+            btnFriendSubmit.disabled = false;
+            btnFriendSubmit.textContent = 'Confirmar Asistencia';
+        });
+    });
+}
+
 function showSuccess(title, msg, showGiftModal = true) {
     document.getElementById('success-title').textContent = title;
     document.getElementById('success-message').textContent = msg;
