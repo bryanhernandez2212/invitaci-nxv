@@ -102,12 +102,12 @@ function nextSlide() {
 
 function resetInterval() {
     clearInterval(slideInterval);
-    slideInterval = setInterval(nextSlide, 3500); // 3.5 seconds
+    slideInterval = setInterval(nextSlide, 6000); // 6 seconds
 }
 
 // Initial display and auto-play
 showSlides(slideIndex);
-slideInterval = setInterval(nextSlide, 3000);
+slideInterval = setInterval(nextSlide, 6000);
 
 // --- Story Scroll Animation ---
 document.addEventListener('scroll', () => {
@@ -146,26 +146,20 @@ document.addEventListener('scroll', () => {
 // --- Libro Interactivo de Eventos ---
 const eventBook = document.getElementById('event-book');
 const layerCover = document.getElementById('layer-cover');
-const layerCeremony = document.getElementById('layer-ceremony');
 const instructionText = document.querySelector('.tap-instruction');
 
-let bookState = 0; // 0: Portada, 1: Ceremonia, 2: Recepción
+let bookState = 0; // 0: Portada, 1: Recepción
 
 if (eventBook) {
     eventBook.addEventListener('click', () => {
         if (bookState === 0) {
-            // Clic 1: Abre la portada (muestra ceremonia)
+            // Clic 1: Abre la portada (muestra recepción)
             if (instructionText) instructionText.style.opacity = '0';
             layerCover.classList.add('flipped');
             bookState = 1;
-        } else if (bookState === 1) {
-            // Clic 2: Voltea página de ceremonia (muestra recepción)
-            layerCeremony.classList.add('flipped');
-            bookState = 2;
-        } else if (bookState === 2) {
-            // Clic 3: Cierra el libro por completo
+        } else {
+            // Clic 2: Cierra el libro por completo
             layerCover.classList.remove('flipped');
-            layerCeremony.classList.remove('flipped');
             if (instructionText) instructionText.style.opacity = '1';
             bookState = 0;
         }
@@ -174,39 +168,92 @@ if (eventBook) {
 
 // --- Music Toggle Logic ---
 const music = document.getElementById('bg-music');
+const carouselMusic = document.getElementById('carousel-music');
 const musicToggleBtn = document.getElementById('music-toggle');
 let isPlaying = false;
+let activeAudio = music; // Pista que suena (o que debe sonar) actualmente
+
+function fadeAudio(el, from, to, duration, onDone) {
+    if (!el) return;
+    clearInterval(el._fadeInterval);
+    const steps = 20;
+    const stepTime = duration / steps;
+    let step = 0;
+    el.volume = from;
+    el._fadeInterval = setInterval(() => {
+        step++;
+        el.volume = Math.max(0, Math.min(1, from + (to - from) * (step / steps)));
+        if (step >= steps) {
+            clearInterval(el._fadeInterval);
+            if (onDone) onDone();
+        }
+    }, stepTime);
+}
+
+function playActive() {
+    if (!activeAudio) return;
+    activeAudio.volume = 0;
+    activeAudio.play().then(() => {
+        fadeAudio(activeAudio, 0, 1, 600);
+        if (musicToggleBtn) musicToggleBtn.classList.add('playing');
+        isPlaying = true;
+    }).catch(error => {
+        console.log("Audio play failed:", error);
+    });
+}
+
+function pauseActive() {
+    if (!activeAudio) return;
+    fadeAudio(activeAudio, activeAudio.volume, 0, 600, () => activeAudio.pause());
+    if (musicToggleBtn) musicToggleBtn.classList.remove('playing');
+    isPlaying = false;
+}
+
+// Cambia la pista activa (con crossfade) cuando el usuario entra/sale del carrusel de fotos
+function switchTrack(nextAudio) {
+    if (!nextAudio || activeAudio === nextAudio) return;
+    const previous = activeAudio;
+    activeAudio = nextAudio;
+
+    if (!isPlaying) return; // Solo se recuerda cuál pista debe sonar al reanudar
+
+    fadeAudio(previous, previous.volume, 0, 600, () => previous.pause());
+    nextAudio.volume = 0;
+    nextAudio.play().then(() => {
+        fadeAudio(nextAudio, 0, 1, 600);
+    }).catch(e => console.log('Audio bloqueado:', e));
+}
 
 if (musicToggleBtn && music) {
     musicToggleBtn.addEventListener('click', () => {
         if (isPlaying) {
-            music.pause();
-            musicToggleBtn.classList.remove('playing');
-            isPlaying = false;
+            pauseActive();
         } else {
-            music.play().then(() => {
-                musicToggleBtn.classList.add('playing');
-                isPlaying = true;
-            }).catch(error => {
-                console.log("Audio play failed:", error);
-            });
+            playActive();
         }
     });
 
     // Optional: Attempt to play on first scroll interaction (some browsers allow this)
     const playOnInteraction = () => {
         if (!isPlaying) {
-            music.play().then(() => {
-                musicToggleBtn.classList.add('playing');
-                isPlaying = true;
-                document.removeEventListener('scroll', playOnInteraction);
-            }).catch(e => {
-                // Autoplay blocked, wait for explicit click
-            });
+            playActive();
+            document.removeEventListener('scroll', playOnInteraction);
         }
     };
-    
+
     document.addEventListener('scroll', playOnInteraction, { once: true });
+}
+
+// Suena "Serenata" mientras el carrusel de fotos está visible; vuelve a la música normal al salir
+const carouselContainerEl = document.querySelector('.carousel-container');
+if (carouselMusic && carouselContainerEl) {
+    const musicObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            switchTrack(entry.isIntersecting ? carouselMusic : music);
+        });
+    }, { threshold: 0.5 });
+
+    musicObserver.observe(carouselContainerEl);
 }
 
 // --- Envelope / Splash Screen Logic ---
@@ -229,11 +276,8 @@ if (openBtn && splashScreen) {
         const sfxOpen = document.getElementById('sfx-open');
         if (sfxOpen) sfxOpen.play().catch(e => console.log('SFX bloqueado:', e));
         
-        if (music && !isPlaying) {
-            music.play().then(() => {
-                if (musicToggleBtn) musicToggleBtn.classList.add('playing');
-                isPlaying = true;
-            }).catch(e => console.log('Audio background bloqueado:', e));
+        if (!isPlaying) {
+            playActive();
         }
 
         // 2. Romper el sello de cera

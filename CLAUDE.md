@@ -30,16 +30,22 @@ When bumping `script.js`, the `<script>` tag in `index.html` uses a cache-bustin
 
 4. **Countdown timer** — `eventDate` is hardcoded at the top of `script.js` (`new Date('September 19, 2026 16:00:00')`); update it there when the event date changes. Note the confirmation-section copy in `index.html` also states a separate RSVP deadline ("10 de septiembre de 2026") that must be updated independently if it changes.
 
-5. **Interactive "event book"** (`#event-book`) — a 3-state click-through (cover → ceremony → reception → closed) implemented as CSS-flip layers (`.book-layer.flipped`) toggled by `bookState` in `script.js`.
+5. **Interactive "event book"** (`#event-book`) — click-through implemented as CSS-flip layers (`.book-layer.flipped`) toggled by `bookState` in `script.js`. The HTML now only has two layers, `#layer-cover` and `#layer-reception` (the ceremony layer was removed — see bug note below).
 
 6. **RSVP / attendance system** — talks to an external backend at `https://backinvitacionc.vercel.app/guests` (hardcoded `API_URL` in `script.js`):
    - `GET /guests` populates the family `<select>` (sorted alphabetically).
    - `GET /guests/:id` fetches a family's pass count on selection.
    - `PATCH /guests/:id` with `{ status: 'confirmed'|'declined', attendingCount }` records the RSVP; the confirmed/declined option is then removed from the live select.
    - This is a 3-step UI (`search-step` → `details-step` → `success-step`) toggled via `.hidden` class swaps, all driven by plain DOM lookups (no framework, no build step) — there is no client-side test coverage, so verify RSVP changes manually against the live API.
+   - Confirming (not declining) triggers the gift-note modal (`#gift-modal-overlay`) via `showSuccess(..., showGiftModal=true)`, opened 900ms after the success step is shown.
+   - The RSVP deadline is stated inline in `#confirmation-instructions` in `index.html` ("31 de agosto de 2026") and is independent of `eventDate` in `script.js` — update both if the date changes.
 
-**Styling**: single `style.css` (~1200 lines) organized with `/* --- Section --- */` comment headers matching the HTML sections (decoración fija, scroll story, padres/padrinos, carousel, event book, splash/envelope, música, confirmación). Fonts are loaded from Google Fonts (`Great Vibes`, `Cinzel`, `Playfair Display`) via `<link>` in `index.html`'s `<head>`.
+7. **Friend RSVP (no assigned family)** — a separate, simpler flow for guests without a family entry, toggled from `#btn-friend-toggle` inside the search step: options step (`#friend-options-step`) → name step (`#friend-name-step`) → success step (`#friend-success-step`). Posts `{ name }` to a *different* endpoint, `FRIEND_API_URL` (`https://backinvitacionc.vercel.app/amigos/confirmar`), expecting HTTP 201 on success.
+
+**Styling**: single `style.css` (~1380 lines) organized with `/* --- Section --- */` comment headers matching the HTML sections (decoración fija, scroll story, padres/padrinos, sombrero, carousel, event book, ceremony details, splash/envelope, música, confirmación, amigos, gift modal). Fonts are loaded from Google Fonts (`Great Vibes`, `Cinzel`, `Playfair Display`) via `<link>` in `index.html`'s `<head>`.
 
 **Assets**: `assets/img/` (decorative PNGs used across hero, carousel, and event book) and `assets/music/` (background music + envelope-open SFX).
+
+**Known bug**: the event book's third click never closes the book. `script.js` still looks up `layerCeremony` by the old id `layer-ceremony`, which no longer exists in `index.html` (only `layer-cover` and `layer-reception` remain) — `layerCeremony` is `null`, so the `bookState === 1` branch throws when it calls `layerCeremony.classList.add('flipped')`, and `bookState` never advances to 2. `style.css` also still has an orphaned `#layer-ceremony` rule. Fix by updating the click handler (and ids/CSS) to match the current 2-layer cover→reception→closed flow.
 
 **Dead code note**: `script.js` has a "Simple reveal animation on scroll" `IntersectionObserver` block that watches `.section, .card` elements and adds a `.reveal` class to fade them in — but no element in `index.html` carries those classes (sections use their own classes like `confirmation-section reveal`, with `reveal` already hardcoded), so the observer never fires. Visibility of those sections is not scroll-driven; don't assume this block is wiring up an active effect when touching scroll behavior.

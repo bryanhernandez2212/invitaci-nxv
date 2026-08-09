@@ -52,6 +52,10 @@
         <source src="assets/music/musica.mp3" type="audio/mpeg">
         Tu navegador no soporta el elemento de audio.
     </audio>
+    <audio id="carousel-music" loop>
+        <source src="assets/music/Serenata.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
     <button id="music-toggle" class="music-btn" aria-label="Reproducir música">
         🎵
     </button>
@@ -98,19 +102,16 @@
         <!-- Carrusel de Imágenes -->
         <section class="carousel-container">
             <div class="carousel-slide fade">
-                <img src="assets/img/caballo.png" alt="Imagen Caballo">
+                <img src="assets/img/carousel/foto1.jpeg" alt="Foto 1" class="carousel-photo">
             </div>
             <div class="carousel-slide fade">
-                <img src="assets/img/persona.png" alt="Imagen Quinceañera">
+                <img src="assets/img/carousel/foto2.jpeg" alt="Foto 2" class="carousel-photo">
             </div>
             <div class="carousel-slide fade">
-                <img src="assets/img/sombrero.png" alt="Imagen Sombrero">
+                <img src="assets/img/carousel/foto3.jpeg" alt="Foto 3" class="carousel-photo">
             </div>
             <div class="carousel-slide fade">
-                <img src="assets/img/flores-principal.png" alt="Flores">
-            </div>
-            <div class="carousel-slide fade">
-                <img src="assets/img/rueda.png" alt="Rueda">
+                <img src="assets/img/carousel/foto4.jpeg" alt="Foto 4" class="carousel-photo">
             </div>
 
             <div class="dots-container">
@@ -118,7 +119,6 @@
                 <span class="dot" onclick="currentSlide(2)"></span>
                 <span class="dot" onclick="currentSlide(3)"></span>
                 <span class="dot" onclick="currentSlide(4)"></span>
-                <span class="dot" onclick="currentSlide(5)"></span>
             </div>
         </section>
 
@@ -173,33 +173,32 @@
                         <p class="book-cover-subtitle" style="margin-top:20px; font-family:'Playfair Display',serif; font-style:italic; color:#888;">Toca para abrir</p>
                     </div>
                 </div>
-                <!-- Capa 3: Recepción -->
+                <!-- Capa 2: Recepción -->
                 <div class="book-layer" id="layer-reception">
     <div class="page-content">
-        <img src="assets/img/ceremonia.png" alt="Recepción" class="iglesia-img" style="width: 140px; margin-bottom: 20px;">
+        <img src="assets/img/ceremonia.png" alt="Recepción" class="iglesia-img reception-img">
 
-        <h2 class="ceremony-title" style="font-size: 1.8rem;">Recepción</h2>
+        <p class="reception-badge">✦ Fiesta de Recepción ✦</p>
+        <h2 class="ceremony-title reception-title">Recepción</h2>
 
-        <p class="ceremony-place" style="font-size: 1.1rem;">
-            Salón Terranova
+        <p class="ceremony-place reception-place">Salón Terranova</p>
+        <p class="reception-address">
+            Venustiano Carranza, Barrio de San Diego<br>
+            San Cristóbal de las Casas, Chiapas
         </p>
 
         <a
             href="https://www.google.com/maps/search/?api=1&query=Venustiano+Carranza,+Barrio+de+San+Diego,+29270+San+Cristóbal+de+las+Casas,+Chiapas"
-            class="btn-location"
+            class="btn-location btn-location-reception"
             target="_blank"
             rel="noopener noreferrer"
-            style="padding: 10px 25px; font-size: 0.85rem; margin-top: 25px;"
+            onclick="event.stopPropagation()"
         >
-            Venustiano Carranza, Barrio de San Diego
+            <span class="btn-location-icon" aria-hidden="true">📍</span> Ver ubicación
         </a>
+        <p class="location-hint">Toca el botón para abrir la ubicación en Google Maps</p>
 
-        <p
-            class="tap-instruction"
-            style="font-size: 0.75rem; margin-top: 40px; opacity: 0.6; animation: none;"
-        >
-            Toca para cerrar libro
-        </p>
+        <p class="tap-instruction reception-close-hint">✦ Toca el libro para cerrar ✦</p>
     </div>
 </div>
             </div>
@@ -312,7 +311,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=7"></script>
 </body>
 
 </html>
