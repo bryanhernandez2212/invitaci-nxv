@@ -173,38 +173,69 @@ const musicToggleBtn = document.getElementById('music-toggle');
 let isPlaying = false;
 let activeAudio = music; // Pista que suena (o que debe sonar) actualmente
 
+let audioActivationCounter = 0;
+
+function stopFade(el) {
+    if (el && el._fadeInterval) {
+        clearInterval(el._fadeInterval);
+        el._fadeInterval = null;
+    }
+}
+
 function fadeAudio(el, from, to, duration, onDone) {
     if (!el) return;
-    clearInterval(el._fadeInterval);
+    stopFade(el);
     const steps = 20;
     const stepTime = duration / steps;
     let step = 0;
     el.volume = from;
-    el._fadeInterval = setInterval(() => {
+    const intervalId = setInterval(() => {
         step++;
         el.volume = Math.max(0, Math.min(1, from + (to - from) * (step / steps)));
         if (step >= steps) {
-            clearInterval(el._fadeInterval);
+            clearInterval(intervalId);
+            if (el._fadeInterval === intervalId) el._fadeInterval = null;
             if (onDone) onDone();
         }
     }, stepTime);
+    el._fadeInterval = intervalId;
+}
+
+// Reproduce `el` con fade-in, cancelando cualquier fundido/reproducción pendiente sobre
+// ese mismo elemento para que una activación más reciente siempre gane (evita que un
+// play() o pause() disparado por un cambio anterior llegue tarde y deje el audio "trabado").
+function activateAudio(el, onStarted) {
+    if (!el) return;
+    stopFade(el);
+    el.volume = 0;
+    const token = ++audioActivationCounter;
+    el._activationToken = token;
+    el.play().then(() => {
+        if (el._activationToken !== token) return; // Un cambio posterior ya invalidó esta activación
+        fadeAudio(el, 0, 1, 600);
+        if (onStarted) onStarted();
+    }).catch(error => console.log('Audio bloqueado:', error));
+}
+
+// Fade-out + pausa de `el`, invalidando cualquier activación pendiente sobre el mismo elemento.
+function deactivateAudio(el) {
+    if (!el) return;
+    el._activationToken = ++audioActivationCounter;
+    stopFade(el);
+    fadeAudio(el, el.volume, 0, 600, () => el.pause());
 }
 
 function playActive() {
     if (!activeAudio) return;
-    activeAudio.volume = 0;
-    activeAudio.play().then(() => {
-        fadeAudio(activeAudio, 0, 1, 600);
+    activateAudio(activeAudio, () => {
         if (musicToggleBtn) musicToggleBtn.classList.add('playing');
         isPlaying = true;
-    }).catch(error => {
-        console.log("Audio play failed:", error);
     });
 }
 
 function pauseActive() {
     if (!activeAudio) return;
-    fadeAudio(activeAudio, activeAudio.volume, 0, 600, () => activeAudio.pause());
+    deactivateAudio(activeAudio);
     if (musicToggleBtn) musicToggleBtn.classList.remove('playing');
     isPlaying = false;
 }
@@ -217,11 +248,8 @@ function switchTrack(nextAudio) {
 
     if (!isPlaying) return; // Solo se recuerda cuál pista debe sonar al reanudar
 
-    fadeAudio(previous, previous.volume, 0, 600, () => previous.pause());
-    nextAudio.volume = 0;
-    nextAudio.play().then(() => {
-        fadeAudio(nextAudio, 0, 1, 600);
-    }).catch(e => console.log('Audio bloqueado:', e));
+    deactivateAudio(previous);
+    activateAudio(nextAudio);
 }
 
 if (musicToggleBtn && music) {
@@ -531,11 +559,15 @@ function hideFriendSteps() {
     friendSuccessStep.classList.add('hidden');
 }
 
-function showFriendResult(icon, message) {
+function showFriendResult(icon, message, showGiftModal = false) {
     hideFriendSteps();
     friendSuccessIcon.textContent = icon;
     friendSuccessMessage.textContent = message;
     friendSuccessStep.classList.remove('hidden');
+
+    if (showGiftModal) {
+        setTimeout(openGiftModal, 900);
+    }
 }
 
 if (btnFriendToggle) {
@@ -592,7 +624,7 @@ if (btnFriendSubmit) {
             body: JSON.stringify({ name })
         }).then(async response => {
             if (response.status === 201) {
-                showFriendResult('✓', `¡Gracias ${name}, te esperamos!`);
+                showFriendResult('✓', `¡Gracias ${name}, te esperamos!`, true);
             } else {
                 const data = await response.json().catch(() => ({}));
                 throw new Error(data.error || 'Hubo un error al confirmar. Intenta de nuevo.');
