@@ -123,7 +123,15 @@ document.addEventListener('scroll', () => {
         // Restore float animation if at top, but realistically the float is lost once transformed
         // It's a trade-off for the scroll effect.
     });
-    
+
+    // El indicador "Desliza para ver más" se desvanece apenas el usuario empieza a
+    // moverse (más rápido que el resto), y no se toca su transform (usa translateX
+    // para centrarse) para no perder el centrado horizontal.
+    const scrollHint = document.getElementById('scroll-hint');
+    if (scrollHint) {
+        scrollHint.style.opacity = 1 - Math.min(scrollY / 100, 1);
+    }
+
     // Subtle scale effect on the Quinceañera
     const persona = document.getElementById('persona-img');
     if (persona) {
@@ -227,10 +235,12 @@ function deactivateAudio(el) {
 
 function playActive() {
     if (!activeAudio) return;
-    activateAudio(activeAudio, () => {
-        if (musicToggleBtn) musicToggleBtn.classList.add('playing');
-        isPlaying = true;
-    });
+    // Se marca como "reproduciendo" de inmediato (no se espera a que la promesa de
+    // play() resuelva) para que switchTrack() reconozca correctamente un cambio de
+    // pista si el usuario desliza al carrusel antes de que termine de arrancar el audio.
+    isPlaying = true;
+    if (musicToggleBtn) musicToggleBtn.classList.add('playing');
+    activateAudio(activeAudio);
 }
 
 function pauseActive() {
@@ -354,14 +364,18 @@ fetch(API_URL)
     .then(response => response.json())
     .then(data => {
         let arr = data.data || [];
-        
+
+        // Solo familias: los "amigos" tienen su propio flujo (ver btn-friend-toggle) y no
+        // deben aparecer en el select de familias.
+        arr = arr.filter(g => g.tipo === 'familia');
+
         // Ordenar alfabéticamente
         arr.sort((a, b) => a.name.localeCompare(b.name));
         familiesList = arr;
 
         if (familySelect) {
             familySelect.innerHTML = '<option value="" disabled selected>Selecciona tu familia...</option>';
-            
+
             // Mostrar todas las familias sin filtrar
             arr.forEach(family => {
                 const option = document.createElement('option');
@@ -369,7 +383,7 @@ fetch(API_URL)
                 option.textContent = family.name;
                 familySelect.appendChild(option);
             });
-            
+
             if (arr.length === 0) {
                 familySelect.innerHTML = '<option value="" disabled selected>No se encontraron familias</option>';
                 familySelect.disabled = true;
@@ -382,10 +396,10 @@ fetch(API_URL)
 if (familySelect) {
     familySelect.addEventListener('change', (e) => {
         const familyId = e.target.value;
-        
+
         // Deshabilitar temporalmente mientras se hace la petición
         familySelect.disabled = true;
-        
+
         fetch(`${API_URL}/${familyId}`)
             .then(response => response.json())
             .then(data => {
@@ -460,18 +474,18 @@ if (btnConfirmAttendance) {
             // Actualizar local
             selectedFamily.status = 'confirmed';
             selectedFamily.attendingCount = attendingCount;
-            
+
             // Remover del select en vivo
             if (familySelect) {
                 const option = familySelect.querySelector(`option[value="${selectedFamily.id}"]`);
                 if (option) option.remove();
-                
+
                 if (familySelect.options.length <= 1) { // Solo queda el placeholder
                     familySelect.innerHTML = '<option value="" disabled selected>Todas las invitaciones han sido confirmadas</option>';
                     familySelect.disabled = true;
                 }
             }
-            
+
             // Mostrar éxito
             showSuccess('¡Gracias por confirmar!', 'Los esperamos con mucha emoción.');
         }).catch(err => {
@@ -509,18 +523,18 @@ if (btnDeclineAttendance) {
                 if (!response.ok) throw new Error('Network response was not ok');
                 selectedFamily.status = 'declined';
                 selectedFamily.attendingCount = 0;
-                
+
                 // Remover del select en vivo
                 if (familySelect) {
                     const option = familySelect.querySelector(`option[value="${selectedFamily.id}"]`);
                     if (option) option.remove();
-                    
+
                     if (familySelect.options.length <= 1) {
                         familySelect.innerHTML = '<option value="" disabled selected>Todas las invitaciones han sido confirmadas</option>';
                         familySelect.disabled = true;
                     }
                 }
-                
+
                 // Mostrar éxito
                 const icon = document.querySelector('.success-icon');
                 if (icon) icon.textContent = '♡';
