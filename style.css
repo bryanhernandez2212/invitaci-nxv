@@ -354,8 +354,17 @@ body {
     color: #b58900;
     text-transform: uppercase;
     letter-spacing: 5px;
-    margin-bottom: 40px;
+    margin-bottom: 10px;
     font-weight: normal;
+}
+
+.countdown-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: #888;
+    letter-spacing: 1px;
+    margin-bottom: 40px;
 }
 
 #countdown {
@@ -503,6 +512,14 @@ body {
 #layer-reception .reception-place {
     font-size: 1.05rem;
     margin-bottom: 4px;
+}
+
+.reception-datetime {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #b58900;
+    margin-bottom: 8px;
 }
 
 .reception-address {

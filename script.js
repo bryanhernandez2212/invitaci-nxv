@@ -1,5 +1,5 @@
 // Configuration: Set the date of the event
-const eventDate = new Date('September 19, 2026 16:00:00').getTime();
+const eventDate = new Date('September 19, 2026 16:30:00').getTime();
 
 // Inicializar paneles de eventos
 const _pRecepcion = document.getElementById('panel-recepcion');

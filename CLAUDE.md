@@ -16,7 +16,7 @@ python3 -m http.server 8080
 
 The `.vscode/launch.json` "Launch Chrome against localhost" config expects the site at `http://localhost:8080`.
 
-When bumping `script.js`, the `<script>` tag in `index.html` uses a cache-busting query string (`script.js?v=2`) — increment it when changing script.js so browsers/CDN don't serve a stale cached copy.
+When bumping `script.js`, the `<script>` tag in `index.html` uses a cache-busting query string (`script.js?v=N`) — increment `N` when changing script.js so browsers/CDN don't serve a stale cached copy.
 
 ## Architecture
 
@@ -28,9 +28,9 @@ When bumping `script.js`, the `<script>` tag in `index.html` uses a cache-bustin
 
 3. **Image carousel** — plain vanilla slideshow (`showSlides`/`changeSlide`/`currentSlide`), auto-advances via `setInterval`, dots wired with inline `onclick` in `index.html`.
 
-4. **Countdown timer** — `eventDate` is hardcoded at the top of `script.js` (`new Date('September 19, 2026 16:00:00')`); update it there when the event date changes. Note the confirmation-section copy in `index.html` also states a separate RSVP deadline ("10 de septiembre de 2026") that must be updated independently if it changes.
+4. **Countdown timer** — `eventDate` is hardcoded at the top of `script.js` (`new Date('September 19, 2026 16:00:00')`); update it there when the event date changes. This is independent of the RSVP deadline stated in the confirmation-section copy (see point 6) — update both if the dates change.
 
-5. **Interactive "event book"** (`#event-book`) — click-through implemented as CSS-flip layers (`.book-layer.flipped`) toggled by `bookState` in `script.js`. The HTML now only has two layers, `#layer-cover` and `#layer-reception` (the ceremony layer was removed — see bug note below).
+5. **Interactive "event book"** (`#event-book`) — a 2-state click toggle (`bookState` in `script.js`): click 1 flips `#layer-cover` open (`.flipped` class) to reveal `#layer-reception` underneath; click 2 flips it closed. Only `#layer-cover` and `#layer-reception` exist in the HTML/CSS — don't reintroduce a third "ceremony" layer/state without adding it everywhere (id, click handler, CSS).
 
 6. **RSVP / attendance system** — talks to an external backend at `https://backinvitacionc.vercel.app/guests` (hardcoded `API_URL` in `script.js`):
    - `GET /guests` populates the family `<select>` (sorted alphabetically).
@@ -45,7 +45,5 @@ When bumping `script.js`, the `<script>` tag in `index.html` uses a cache-bustin
 **Styling**: single `style.css` (~1380 lines) organized with `/* --- Section --- */` comment headers matching the HTML sections (decoración fija, scroll story, padres/padrinos, sombrero, carousel, event book, ceremony details, splash/envelope, música, confirmación, amigos, gift modal). Fonts are loaded from Google Fonts (`Great Vibes`, `Cinzel`, `Playfair Display`) via `<link>` in `index.html`'s `<head>`.
 
 **Assets**: `assets/img/` (decorative PNGs used across hero, carousel, and event book) and `assets/music/` (background music + envelope-open SFX).
-
-**Known bug**: the event book's third click never closes the book. `script.js` still looks up `layerCeremony` by the old id `layer-ceremony`, which no longer exists in `index.html` (only `layer-cover` and `layer-reception` remain) — `layerCeremony` is `null`, so the `bookState === 1` branch throws when it calls `layerCeremony.classList.add('flipped')`, and `bookState` never advances to 2. `style.css` also still has an orphaned `#layer-ceremony` rule. Fix by updating the click handler (and ids/CSS) to match the current 2-layer cover→reception→closed flow.
 
 **Dead code note**: `script.js` has a "Simple reveal animation on scroll" `IntersectionObserver` block that watches `.section, .card` elements and adds a `.reveal` class to fade them in — but no element in `index.html` carries those classes (sections use their own classes like `confirmation-section reveal`, with `reveal` already hardcoded), so the observer never fires. Visibility of those sections is not scroll-driven; don't assume this block is wiring up an active effect when touching scroll behavior.
